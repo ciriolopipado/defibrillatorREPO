@@ -37,7 +37,8 @@ The package icon can be resized from the preserved cover using `bash scripts/cre
 
 - `Defibrillator.Core`: host-side timing, target leases, charge, cancellation and replay protection.
 - `Plugin`: configuration, patch registration and host lifecycle.
-- `ItemFactory`: deterministic native tracker-shell selection and REPOLib registration.
+- `ItemFactory`: component-based native tracker-shell selection and REPOLib registration.
+- `BatteryDisplayFallback`: clone only self-contained native display subtrees into a private, non-rendering canvas when the donor lacks a display. The live HUD is never rebound.
 - `Patches`: price-floor exception, reserved stock, damage revisions and completed-death tracking.
 - `Device`: held-item input, native battery synchronization and feedback.
 - `NetworkBridge`: REPOLib events, authenticated Photon sender ownership and host-only outcomes.

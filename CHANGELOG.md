@@ -1,10 +1,27 @@
 # Changelog
 
-## Unreleased — presentation update
+## 0.1.1 — 2026-11-05
+
+### Fixed
+
+- Addressed the reported `ItemFactory.EnsureRegistered` failure: `Sequence contains no matching element` during tracker discovery.
+- Replaced the name-filtered `First` lookup with component-based discovery across the configured resource folder, loaded definitions and the item registry.
+- Made an embedded battery display optional for donor selection. When absent, create a private, non-rendering native display copy with subtree-owned references; preserve native charging bookkeeping and the shared HUD.
+- Defer discovery while resources or display templates are unavailable rather than permanently disabling registration after an empty initial search.
+- Preserve required physics, inventory, battery and network checks; explicitly exclude native revival-robot prefabs.
+- Log examined definitions, missing components and display-readiness status instead of a generic LINQ exception.
+
+### Validation
+
+- 45 core tests and 26 game API metadata checks passed; Release build completed with zero warnings/errors.
+- The supplied game log confirms the old failure is in donor selection. It does not identify which old predicate condition excluded the live prefab.
+- New donor discovery and private-display initialization still require an in-game retest. No claim of verified shop spawning or charging is made yet.
+
+## 0.1.0 — presentation and investigation updates
 
 ### Investigation
 
-- Documented custom versus native revival-item identity and the startup/registration/shop log markers for the reported missing shop item. Runtime cause remains unconfirmed pending the host's test log; no speculative gameplay fix was applied.
+- Documented custom versus native revival-item identity and the startup/registration/shop log markers for the reported missing shop item. At that investigation stage, the runtime cause was still pending the host's test log. The later donor-selection error and correction are recorded under 0.1.1.
 
 ### Changed
 

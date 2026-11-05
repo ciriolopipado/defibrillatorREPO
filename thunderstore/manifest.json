@@ -1,6 +1,6 @@
 {
   "name": "Industrial_Defibrillator",
-  "version_number": "0.1.0",
+  "version_number": "0.1.1",
   "website_url": "https://github.com/ciriolopipado/defibrillatorREPO",
   "description": "Experimental rechargeable defibrillator: revive at 1 HP with a random comic voice and harmless electrical aftershocks. Free test shop item, four uses per charge.",
   "dependencies": [

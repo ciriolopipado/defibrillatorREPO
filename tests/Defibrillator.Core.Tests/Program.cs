@@ -4,6 +4,30 @@ using Defibrillator.Core;
 
 var tests = new (string Name, Action Run)[]
 {
+    ("Tracker donor without an embedded display remains compatible", () =>
+    {
+        Equal(true, DonorRequirements.IsCompatible(DonorRequirements.Required));
+    }),
+    ("Embedded display is optional and does not change donor compatibility", () =>
+    {
+        Equal(true, DonorRequirements.IsCompatible(DonorRequirements.Required | DonorParts.BatteryDisplay));
+    }),
+    ("Native reviver is never accepted as the custom donor", () =>
+    {
+        Equal(false, DonorRequirements.IsCompatible(DonorRequirements.Required | DonorParts.NativeReviver));
+    }),
+    ("Incomplete donor reports missing physics and battery components", () =>
+    {
+        var available = DonorRequirements.Required & ~(DonorParts.Battery | DonorParts.Physics);
+        Equal(false, DonorRequirements.IsCompatible(available));
+        Equal(DonorParts.Battery | DonorParts.Physics, DonorRequirements.Missing(available));
+    }),
+    ("Empty donor fails closed and complete donor has no missing requirements", () =>
+    {
+        Equal(false, DonorRequirements.IsCompatible(DonorParts.None));
+        Equal(DonorRequirements.Required, DonorRequirements.Missing(DonorParts.None));
+        Equal(DonorParts.None, DonorRequirements.Missing(DonorRequirements.Required));
+    }),
     ("High/low voice selection has two equally mapped coin outcomes", () =>
     {
         Equal(1.8f, VoiceEffect.ChoosePitch(0)); Equal(0.55f, VoiceEffect.ChoosePitch(1));

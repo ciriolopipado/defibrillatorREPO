@@ -6,11 +6,12 @@ using UnityEngine;
 
 namespace Defibrillator.Mod;
 
-[BepInPlugin(Id, "Industrial Defibrillator", "0.1.0")]
+[BepInPlugin(Id, "Industrial Defibrillator", Version)]
 [BepInDependency("REPOLib", "4.3.0")]
 public sealed class Plugin : BaseUnityPlugin
 {
     public const string Id = "ciriolopipado.defibrillator";
+    public const string Version = "0.1.1";
     internal static Plugin Instance = null!;
     internal Settings Settings = null!;
     internal NetworkBridge Network = null!;
@@ -50,7 +51,7 @@ public sealed class Plugin : BaseUnityPlugin
             Network = new NetworkBridge();
             harmony = new Harmony(Id);
             harmony.PatchAll(typeof(Plugin).Assembly);
-            Logger.LogInfo("Industrial Defibrillator 0.1.0 loaded. Target: R.E.P.O. 0.5.1 / REPOLib 4.3.0. In-game validation required.");
+            Logger.LogInfo("Industrial Defibrillator " + Version + " loaded. Target: R.E.P.O. 0.5.1 / REPOLib 4.3.0. In-game validation required.");
         }
         catch (Exception exception)
         {

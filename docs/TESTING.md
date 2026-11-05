@@ -2,12 +2,12 @@
 
 ## Evidence
 
-Release compilation, 40 core behavior tests and 26 API metadata checks passed in the development environment.
-All game scenarios below are **unrun**. Reference DLLs do not provide a playable game installation.
+Release compilation, 45 core behavior tests and 26 API metadata checks passed in the development environment.
+All game scenarios below are **unrun for v0.1.1**. The user tested v0.1.0 and reported a confirmed registration failure in donor discovery; shop availability did not pass. Reference DLLs do not provide a playable game installation.
 
 ## Preparation
 
-Use two players on R.E.P.O. 0.5.1 with the same test ZIP, BepInExPack 5.4.2305 and REPOLib 4.3.0.
+Use two players on R.E.P.O. 0.5.1 with the same v0.1.1 test ZIP (remove the old installation first), BepInExPack 5.4.2305 and REPOLib 4.3.0.
 Create a separate profile and a new save. First test without optional mods.
 Preserve `BepInEx/LogOutput.log` from both machines after the session.
 

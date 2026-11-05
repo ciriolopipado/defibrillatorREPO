@@ -15,6 +15,7 @@ files = {
     "thunderstore/cover.png": ROOT / "thunderstore/cover.png",
     "thunderstore/ARTWORK.md": ROOT / "thunderstore/ARTWORK.md",
     "docs/TESTING.md": ROOT / "docs/TESTING.md",
+    "docs/TROUBLESHOOTING.md": ROOT / "docs/TROUBLESHOOTING.md",
     "docs/DEVELOPMENT.md": ROOT / "docs/DEVELOPMENT.md",
     "docs/MOD_PROFILE.md": ROOT / "docs/MOD_PROFILE.md",
     "docs/VALIDATION.md": ROOT / "docs/VALIDATION.md",
