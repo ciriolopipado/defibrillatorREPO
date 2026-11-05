@@ -1,0 +1,17 @@
+{
+  "purpose": "Local compile-reference fingerprints; reference binaries are not redistributed.",
+  "reported_game_version": "0.5.1",
+  "sdk": "8.0.427",
+  "sha256": {
+    "Assembly-CSharp.dll": "7df0ff1d03755a71a6755d01fc4c58c3cc044f8aa740f3d1c1379a6d6bd66724",
+    "BepInEx.dll": "8255b28902886085c578b9e427d3073c97002db85176d2090cdeda90ef14ce70",
+    "0Harmony.dll": "1a21cc03424fc82c3dd1346905d16494536b9595ae4162228d99fb7c285c1031",
+    "REPOLib.dll": "3344caf73e7ddff05e2ddea9671b14329df1cc0950ca292d1130ba5c5306e6a2",
+    "PhotonUnityNetworking.dll": "9cac3489e0e25ef95af6e0cb7e7062566b36716d077fb1fad90ce9632ea48e1b",
+    "PhotonRealtime.dll": "61de3f676b19c271a40cbbd5e18def0246091cc26bc3dfd09998552c77861f7d",
+    "Photon3Unity3D.dll": "d57c3e4d6b8538ec45d2cbd5995d0cb1e59cb2c0c0d8dba3932947beb76d06a9",
+    "UnityEngine.CoreModule.dll": "7ec281caeefd851696dd79d5fa2674baac0bf96aa8f0fd818d01be3a4b7d0783",
+    "UnityEngine.AudioModule.dll": "81f8dfa52c89a7100bd1c3c34d2d93f5a7f3d9d6d86c5f10b41aa0da1201854c",
+    "UnityEngine.PhysicsModule.dll": "8af310fe1df68673dc16a46bd087efa7018eba304bfa16264b8bfaa9d36fceb8"
+  }
+}

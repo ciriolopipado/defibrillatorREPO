@@ -4,6 +4,67 @@ using Defibrillator.Core;
 
 var tests = new (string Name, Action Run)[]
 {
+    ("High/low voice selection has two equally mapped coin outcomes", () =>
+    {
+        Equal(1.8f, VoiceEffect.ChoosePitch(0)); Equal(0.55f, VoiceEffect.ChoosePitch(1));
+        Throws<ArgumentOutOfRangeException>(() => VoiceEffect.ChoosePitch(2));
+    }),
+    ("Voice expires at 180 seconds while aftershocks remain active", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 30, 30, "round", "effect");
+        Equal(true, effect.HasVoice(179.99, "round", true));
+        Equal(false, effect.HasVoice(180, "round", true));
+        Equal(true, effect.IsActive(210, "round", true));
+        Equal(true, effect.TryShock(210, "round", true));
+    }),
+    ("Death ends both voice and periodic shocks", () =>
+    {
+        var effect = new VoiceEffect(0.55f, 180, 30, 30, "round", "effect");
+        Equal(false, effect.HasVoice(60, "round", false));
+        Equal(false, effect.TryShock(60, "round", false)); Equal(0, effect.Sequence);
+    }),
+    ("Level changes end both voice and periodic shocks", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 30, 30, "round", "effect");
+        Equal(false, effect.HasVoice(60, "next-round", true));
+        Equal(false, effect.TryShock(60, "next-round", true));
+    }),
+    ("First shock waits 30 seconds and subsequent shocks wait another interval", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 30, 30, "round", "effect");
+        Equal(false, effect.TryShock(29.99, "round", true));
+        Equal(true, effect.TryShock(30, "round", true)); Equal(1, effect.Sequence);
+        Equal(false, effect.TryShock(30, "round", true));
+        Equal(false, effect.TryShock(59.99, "round", true));
+        Equal(true, effect.TryShock(60, "round", true)); Equal(2, effect.Sequence);
+    }),
+    ("A long host hitch causes one shock instead of a catch-up burst", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 30, 30, "round", "effect");
+        Equal(true, effect.TryShock(125, "round", true));
+        Equal(false, effect.TryShock(125, "round", true)); Equal(155d, effect.NextShockAt);
+    }),
+    ("Effect snapshots preserve voice expiry and shock sequence", () =>
+    {
+        var original = new VoiceEffect(0.55f, 180, 30, 30, "round", "effect");
+        original.TryShock(30, "round", true);
+        var restored = new VoiceEffect(original.Pitch, original.VoiceExpiresAt, original.NextShockAt,
+            original.ShockInterval, original.Round, original.Token, original.Sequence);
+        Equal(1, restored.Sequence); Equal(false, restored.TryShock(59, "round", true));
+        Equal(true, restored.TryShock(60, "round", true)); Equal(2, restored.Sequence);
+    }),
+    ("Non-finite effect times fail closed", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 30, 30, "round", "effect");
+        Equal(false, effect.HasVoice(double.NaN, "round", true));
+        Equal(false, effect.TryShock(double.PositiveInfinity, "round", true));
+    }),
+    ("Invalid effect parameters are rejected", () =>
+    {
+        Throws<ArgumentOutOfRangeException>(() => new VoiceEffect(3, 180, 30, 30, "round", "effect"));
+        Throws<ArgumentOutOfRangeException>(() => new VoiceEffect(1.8f, 180, 30, 0, "round", "effect"));
+        Throws<ArgumentException>(() => new VoiceEffect(1.8f, 180, 30, 30, "round", ""));
+    }),
     ("Three seconds revives once at one HP and consumes 25 percent", () =>
     {
         var f = new Fixture();

@@ -9,5 +9,6 @@ local-libs/
 *.dll
 *.pdb
 *.r2z
+*.r2x
+*.rar
 *.blend1
-!assets/**
