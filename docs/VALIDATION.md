@@ -16,7 +16,8 @@
 
 No R.E.P.O. executable was run. Automated tests do not establish actual RPC delivery, microphone/audio behavior, camera presentation, shader appearance, save compatibility, shop interaction or charger behavior.
 The complete supplied mod profile, late joining, host migration and actual multiplayer revival remain untested.
-An optional core CI workflow template is included under `docs/ci`; it is not active CI. The server rejected a push containing a `.github/workflows` change, so the workflow was moved to documentation before retrying. No remote CI run has been observed.
+An optional core CI workflow template is included under `docs/ci`; it is not active CI. No remote CI run has been observed.
+- The complete source, original icon and test ZIP were uploaded to `feature/defibrillator-source`. Direct pushes to `main` were rejected with `fatal error in commit_refs_rules`; the server supplied no root cause.
 
 Use the acceptance checklist to record game-test outcomes before labeling any release stable.
 
