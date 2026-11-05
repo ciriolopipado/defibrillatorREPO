@@ -89,7 +89,7 @@ Price uses displayed shop currency units. Invalid values disable the plugin with
 - Procedural model fit, shader appearance and collision-shell alignment need in-game inspection.
 - If a shop exposes no item volume, guaranteed placement cannot proceed and is logged.
 
-See [development](docs/DEVELOPMENT.md), [testing](docs/TESTING.md), [profile inventory](docs/MOD_PROFILE.md) and [changelog](CHANGELOG.md).
+See [development](docs/DEVELOPMENT.md), [testing](docs/TESTING.md), [troubleshooting](docs/TROUBLESHOOTING.md), [profile inventory](docs/MOD_PROFILE.md) and [changelog](CHANGELOG.md).
 
 ## Conventions
 

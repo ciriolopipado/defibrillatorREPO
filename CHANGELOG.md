@@ -2,6 +2,10 @@
 
 ## Unreleased — presentation update
 
+### Investigation
+
+- Documented custom versus native revival-item identity and the startup/registration/shop log markers for the reported missing shop item. Runtime cause remains unconfirmed pending the host's test log; no speculative gameplay fix was applied.
+
 ### Changed
 
 - Added original AI-generated industrial cover art featuring revival and electrical aftereffects.
