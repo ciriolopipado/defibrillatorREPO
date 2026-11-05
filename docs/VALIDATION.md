@@ -10,7 +10,8 @@
 - Tests include one-HP revival, four battery uses, cancellation, concurrency, repeated death identities, voice expiry, lifetime boundaries, shock intervals and no catch-up bursts.
 - API checks validate every Harmony target's method arity, required private fields, native pitch/camera methods and the reflective shop method's ref-int parameter.
 - Game-reference fingerprints are recorded separately; no reference DLLs are distributed.
-- Package input is an explicit allowlist of original DLLs, metadata, icon and documentation.
+- Package input is an explicit allowlist of original DLLs, metadata, cover art, icon and documentation.
+- Presentation update: the cover is an opaque PNG, and the adapted Thunderstore icon is 256 × 256 RGB PNG. The rebuilt archive preserves the previous gameplay DLLs byte for byte.
 
 ## Not established
 

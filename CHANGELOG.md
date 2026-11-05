@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased — presentation update
+
+### Changed
+
+- Added original AI-generated industrial cover art featuring revival and electrical aftereffects.
+- Replaced the package icon with a 256 × 256 adaptation of the cover.
+- Included the full cover in the README and local test package.
+- Replaced the legacy icon drawing script with an ImageMagick resize helper that preserves the cover source.
+- Refreshed the v0.1.0 local test archive and checksum; gameplay binaries are unchanged.
+
 ## 0.1.0 — 2026-11-05
 
 ### Added

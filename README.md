@@ -1,5 +1,9 @@
 # Industrial Defibrillator for R.E.P.O.
 
+![Industrial Defibrillator cover art](thunderstore/cover.png)
+
+*Promotional illustration; in-game visuals use the procedural model described below.*
+
 **0.1.0 is an experimental test candidate, not a verified stable release.**
 The plugin compiles against the Managed references supplied for R.E.P.O. 0.5.1.
 Automated core and API metadata checks pass. The game has not been run in this environment.

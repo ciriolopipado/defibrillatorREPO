@@ -31,7 +31,7 @@ python3 scripts/package.py
 PowerShell users can run the individual dotnet commands from the shell scripts directly.
 The test runner reports counts and exits nonzero on failure. API checks read metadata without loading Unity.
 The workflow template in `docs/ci/core-workflow.example.yml` runs the core suite only. It is not active CI; game references must not be uploaded to GitHub Actions.
-The original icon can be regenerated using `python3 scripts/create-icon.py` with Pillow installed.
+The package icon can be resized from the preserved cover using `bash scripts/create-icon.sh` with ImageMagick installed. See `thunderstore/ARTWORK.md` for artwork provenance.
 
 ## Architecture
 

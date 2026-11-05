@@ -12,6 +12,8 @@ files = {
     "README.md": ROOT / "README.md",
     "CHANGELOG.md": ROOT / "CHANGELOG.md",
     "icon.png": ROOT / "thunderstore/icon.png",
+    "thunderstore/cover.png": ROOT / "thunderstore/cover.png",
+    "thunderstore/ARTWORK.md": ROOT / "thunderstore/ARTWORK.md",
     "docs/TESTING.md": ROOT / "docs/TESTING.md",
     "docs/DEVELOPMENT.md": ROOT / "docs/DEVELOPMENT.md",
     "docs/MOD_PROFILE.md": ROOT / "docs/MOD_PROFILE.md",
