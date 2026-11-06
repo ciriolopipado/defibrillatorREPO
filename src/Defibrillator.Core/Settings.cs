@@ -13,7 +13,7 @@ public sealed class Settings
     public double HeartbeatTimeoutSeconds { get; }
 
     public Settings(double holdSeconds = 3, double rangeMeters = 2,
-        int revivalHealth = 1, int batteryCost = 25, int price = 0,
+        int revivalHealth = 1, int batteryCost = BalanceMigration.BatteryCost, int price = BalanceMigration.Price,
         double heartbeatTimeoutSeconds = 0.75)
     {
         if (!Finite(holdSeconds) || holdSeconds < 0.25 || holdSeconds > 30)

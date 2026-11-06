@@ -27,7 +27,8 @@ var methods = new (string Type, string Method, int Arguments)[]
     ("ItemEquippable", "GetOwnerPlayerAvatar", 0),
     ("PlayerVoiceChat", "Update", 0),
     ("PlayerVoiceChat", "OverridePitch", 6),
-    ("CameraShake", "Shake", 3)
+    ("CameraShake", "Shake", 3),
+    ("PhysGrabObject", "Awake", 0)
 };
 foreach (var required in methods)
 {
@@ -64,6 +65,20 @@ SkipType(ref spawnSignature); // List<Item>.
 Require(spawnSignature.ReadSignatureTypeCode() == SignatureTypeCode.ByReference &&
     spawnSignature.ReadSignatureTypeCode() == SignatureTypeCode.Int32,
     "Native shop spawn third parameter is ref int");
+using var photonStream = File.OpenRead(Path.Combine(directory, "PhotonUnityNetworking.dll"));
+using var photonPe = new PEReader(photonStream);
+var photonReader = photonPe.GetMetadataReader();
+var photonView = photonReader.GetTypeDefinition(photonReader.TypeDefinitions.Single(handle =>
+    photonReader.GetString(photonReader.GetTypeDefinition(handle).Name) == "PhotonView" &&
+    photonReader.GetString(photonReader.GetTypeDefinition(handle).Namespace) == "Photon.Pun"));
+var dataSetter = photonView.GetMethods().Select(photonReader.GetMethodDefinition).Single(method =>
+    photonReader.GetString(method.Name) == "set_InstantiationData");
+var setterSignature = photonReader.GetBlobReader(dataSetter.Signature);
+setterSignature.ReadSignatureHeader();
+Require(setterSignature.ReadCompressedInteger() == 1 && setterSignature.ReadSignatureTypeCode() == SignatureTypeCode.Void &&
+    setterSignature.ReadSignatureTypeCode() == SignatureTypeCode.SZArray &&
+    setterSignature.ReadSignatureTypeCode() == SignatureTypeCode.Object,
+    "Photon saved-scale payload setter accepts one object array");
 Console.WriteLine($"Executed {checks} game API metadata checks: all passed. No in-game behavior was executed.");
 return 0;
 

@@ -11,7 +11,7 @@ namespace Defibrillator.Mod;
 public sealed class Plugin : BaseUnityPlugin
 {
     public const string Id = "ciriolopipado.defibrillator";
-    public const string Version = "0.1.1";
+    public const string Version = "0.1.2";
     internal static Plugin Instance = null!;
     internal Settings Settings = null!;
     internal NetworkBridge Network = null!;
@@ -27,12 +27,27 @@ public sealed class Plugin : BaseUnityPlugin
         Instance = this;
         try
         {
+            var price = Config.Bind("Shop", "Price", BalanceMigration.Price,
+                "Host setting: price in displayed shop currency units; 2 means 2k.");
+            var batteryCost = Config.Bind("Battery", "CostPercent", BalanceMigration.BatteryCost,
+                "Host setting: percent spent per successful revival, 1–100. Default 50 gives two uses per charge.");
+            var balanceRevision = Config.Bind("Internal", "BalanceRevision", 0,
+                "One-time migration of legacy free-price / four-use test defaults. Keep this value after upgrading.");
+            if (balanceRevision.Value < BalanceMigration.Revision)
+            {
+                var migrated = BalanceMigration.Apply(balanceRevision.Value, price.Value, batteryCost.Value);
+                price.Value = migrated.Price;
+                batteryCost.Value = migrated.BatteryCost;
+                balanceRevision.Value = BalanceMigration.Revision;
+                Config.Save();
+                Logger.LogInfo("Balance defaults migrated: Price=" + price.Value + ", CostPercent=" + batteryCost.Value + ". Custom values were preserved.");
+            }
             Settings = new Settings(
                 Config.Bind("Revival", "HoldSeconds", 3d, "Host setting: hold duration, 0.25–30 seconds.").Value,
                 Config.Bind("Revival", "RangeMeters", 2d, "Host setting: maximum eye-to-head distance, up to 10 meters.").Value,
                 Config.Bind("Revival", "Health", 1, "Host setting: health after revival, 1–100.").Value,
-                Config.Bind("Battery", "CostPercent", 25, "Host setting: percent spent per successful revival, 1–100.").Value,
-                Config.Bind("Shop", "Price", 0, "Host setting: price in displayed shop currency units, not raw valuable dollars.").Value);
+                batteryCost.Value,
+                price.Value);
             GameAccess.Validate();
             VoiceDebuffs.Seconds = Config.Bind("VoiceDebuff", "Seconds", 180d, "Maximum duration, 1–3600 seconds; also ends at death or level end.").Value;
             VoiceDebuffs.HighPitch = Config.Bind("VoiceDebuff", "HighPitch", 1.8f, "Comically high voice multiplier, above 1 and up to 2.").Value;

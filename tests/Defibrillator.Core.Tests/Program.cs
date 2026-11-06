@@ -4,6 +4,57 @@ using Defibrillator.Core;
 
 var tests = new (string Name, Action Run)[]
 {
+    ("New balance defaults are 2k and two revivals per charge", () =>
+    {
+        var settings = new Settings(); Equal(2, settings.Price); Equal(50, settings.BatteryCost);
+    }),
+    ("Legacy test defaults migrate to 2k and 50 percent consumption", () =>
+    {
+        var result = BalanceMigration.Apply(0, 0, 25); Equal(2, result.Price); Equal(50, result.BatteryCost);
+    }),
+    ("Balance migration preserves nondefault custom settings", () =>
+    {
+        var result = BalanceMigration.Apply(0, 7, 40); Equal(7, result.Price); Equal(40, result.BatteryCost);
+    }),
+    ("Explicit legacy-like values are preserved after one-time migration", () =>
+    {
+        var result = BalanceMigration.Apply(BalanceMigration.Revision, 0, 25);
+        Equal(0, result.Price); Equal(25, result.BatteryCost);
+    }),
+    ("Migration updates only the remaining legacy default", () =>
+    {
+        var priceOnly = BalanceMigration.Apply(0, 0, 40); Equal(2, priceOnly.Price); Equal(40, priceOnly.BatteryCost);
+        var costOnly = BalanceMigration.Apply(0, 7, 25); Equal(7, costOnly.Price); Equal(50, costOnly.BatteryCost);
+    }),
+    ("Compact hitbox stays within a 36 by 25 by 14 centimeter envelope", () =>
+    {
+        foreach (var box in DeviceGeometry.CollisionBoxes)
+        {
+            if ((Math.Abs(box.X) + box.Width / 2) * DeviceGeometry.ModelScale > 0.18 ||
+                (Math.Abs(box.Y) + box.Height / 2) * DeviceGeometry.ModelScale > 0.125 ||
+                (Math.Abs(box.Z) + box.Depth / 2) * DeviceGeometry.ModelScale > 0.07)
+                throw new Exception("Oversized collision box: " + box.Name);
+        }
+    }),
+    ("Compound hitbox has six solid positive-size parts and a matching floor anchor", () =>
+    {
+        Equal(6, DeviceGeometry.CollisionBoxes.Count);
+        foreach (var box in DeviceGeometry.CollisionBoxes)
+            if (box.Width <= 0 || box.Height <= 0 || box.Depth <= 0) throw new Exception("Invalid box dimensions.");
+        var casing = DeviceGeometry.CollisionBoxes[0];
+        Equal((casing.Y - casing.Height / 2) * DeviceGeometry.ModelScale, DeviceGeometry.FloorY);
+        Equal(3f, DeviceGeometry.MassKg);
+    }),
+    ("Configured four-use battery remains available as an override", () =>
+    {
+        var f = new Fixture(100, new Settings(batteryCost: 25));
+        for (int i = 0; i < 4; i++)
+        {
+            f.World.Life = "custom-" + i; f.World.Dead = true; f.Hold();
+            Equal(Outcome.Revived, f.Complete().Outcome);
+        }
+        Equal(0, f.Service.GetCharge("a")); Equal(4, f.World.Revivals);
+    }),
     ("Tracker donor without an embedded display remains compatible", () =>
     {
         Equal(true, DonorRequirements.IsCompatible(DonorRequirements.Required));
@@ -89,12 +140,12 @@ var tests = new (string Name, Action Run)[]
         Throws<ArgumentOutOfRangeException>(() => new VoiceEffect(1.8f, 180, 30, 0, "round", "effect"));
         Throws<ArgumentException>(() => new VoiceEffect(1.8f, 180, 30, 30, "round", ""));
     }),
-    ("Three seconds revives once at one HP and consumes 25 percent", () =>
+    ("Three seconds revives once at one HP and consumes 50 percent", () =>
     {
         var f = new Fixture();
         Equal(Outcome.Charging, f.Hold().Outcome);
         Equal(Outcome.Revived, f.Complete().Outcome);
-        Equal(75, f.Service.GetCharge("a"));
+        Equal(50, f.Service.GetCharge("a"));
         Equal(1, f.World.LastHealth);
         Equal(1, f.World.Revivals);
         Equal(Outcome.InvalidTarget, f.Hold().Outcome);
@@ -112,21 +163,21 @@ var tests = new (string Name, Action Run)[]
         Equal(Outcome.Cancelled, f.Service.Release(1, "a").Outcome);
         Equal(100, f.Service.GetCharge("a")); Equal(0d, f.Hold().Progress);
     }),
-    ("Four uses exhaust battery and a fifth cannot start", () =>
+    ("Two default uses exhaust battery and a third cannot start", () =>
     {
         var f = new Fixture();
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 2; i++)
         {
             f.World.Life = "death-" + i; f.World.Dead = true;
             f.Hold(); Equal(Outcome.Revived, f.Complete().Outcome);
         }
-        f.World.Life = "fifth"; f.World.Dead = true;
-        Equal(Outcome.EmptyBattery, f.Hold().Outcome); Equal(4, f.World.Revivals);
+        f.World.Life = "third"; f.World.Dead = true;
+        Equal(Outcome.EmptyBattery, f.Hold().Outcome); Equal(2, f.World.Revivals);
     }),
     ("Charger permits reuse without creating an extra item", () =>
     {
         var f = new Fixture(0); Equal(Outcome.EmptyBattery, f.Hold().Outcome);
-        f.Service.UpdateChargeFromCharger("a", 25); f.Hold();
+        f.Service.UpdateChargeFromCharger("a", 50); f.Hold();
         Equal(Outcome.Revived, f.Complete().Outcome); Equal(0, f.Service.GetCharge("a"));
     }),
     ("Duplicate item registration cannot refill battery", () =>

@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.2 — 2026-11-06
+
+### Changed
+
+- Replaced donor-bounds-dependent model scaling with a fixed compact scale: approximately 35 cm wide including paddles, with a nominal 3 kg Unity mass.
+- Removed inherited colliders/markers and rebuilt six native grabbable box colliders around the casing, paddles and handle; cables remain cosmetic.
+- Updated native mass originals and a private physics-preset copy so native startup does not restore the lightweight donor mass. Adjusted damping, center of mass, grab/shelf anchors and room overlap size.
+- Normalized saved/network scale before native physics initialization to prevent old donor scale from reintroducing oversized collision bounds.
+- Set default shop price to 2k and battery cost to 50%, allowing two revivals per full charge.
+- Added a one-time migration of legacy free-price/four-use defaults while preserving other customized values and existing voice/aftershock settings.
+
+### Validation
+
+- 53 core tests and 28 API metadata checks passed; Release build completed without warnings/errors.
+- Added balance migration, compact geometry-envelope and two-use battery regressions, plus native physics-init and Photon scale-setter checks.
+- The user's preceding game test established an oversized model and unrealistic weight/collision behavior. The new physical behavior still requires in-game validation; automated checks do not establish weight feel or collision quality.
+
 ## 0.1.1 — 2026-11-05
 
 ### Fixed

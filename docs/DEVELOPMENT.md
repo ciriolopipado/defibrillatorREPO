@@ -40,6 +40,8 @@ The package icon can be resized from the preserved cover using `bash scripts/cre
 - `ItemFactory`: component-based native tracker-shell selection and REPOLib registration.
 - `BatteryDisplayFallback`: clone only self-contained native display subtrees into a private, non-rendering canvas when the donor lacks a display. The live HUD is never rebound.
 - `Patches`: price-floor exception, reserved stock, damage revisions and completed-death tracking.
+- `DevicePhysics` / `DeviceGeometry`: fixed 0.5 model scale, six compound colliders, 3 kg private mass preset, native grab/shelf/room anchors and saved-scale normalization.
+- `BalanceMigration`: once-only conversion of old test defaults, with a persistent config revision and preservation of other custom values.
 - `Device`: held-item input, native battery synchronization and feedback.
 - `NetworkBridge`: REPOLib events, authenticated Photon sender ownership and host-only outcomes.
 - `GameWorld` / `GameAccess`: version-sensitive observations and native revival.

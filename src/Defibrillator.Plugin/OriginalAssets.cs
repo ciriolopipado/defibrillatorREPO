@@ -1,4 +1,5 @@
 using System;
+using Defibrillator.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -14,8 +15,6 @@ internal static class OriginalAssets
 
     internal static void BuildModel(GameObject prefab)
     {
-        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
-        bool hasBounds = false;
         Material? template = null;
         foreach (var renderer in prefab.GetComponentsInChildren<Renderer>(true))
         {
@@ -25,15 +24,6 @@ internal static class OriginalAssets
             if (filter && filter.sharedMesh)
             {
                 template ??= renderer.sharedMaterial;
-                var local = filter.sharedMesh.bounds;
-                for (int corner = 0; corner < 8; corner++)
-                {
-                    var point = local.center + Vector3.Scale(local.extents,
-                        new Vector3((corner & 1) == 0 ? -1 : 1, (corner & 2) == 0 ? -1 : 1, (corner & 4) == 0 ? -1 : 1));
-                    point = prefab.transform.InverseTransformPoint(renderer.transform.TransformPoint(point));
-                    if (!hasBounds) { bounds = new Bounds(point, Vector3.zero); hasBounds = true; }
-                    else bounds.Encapsulate(point);
-                }
             }
             renderer.enabled = false;
         }
@@ -41,13 +31,8 @@ internal static class OriginalAssets
         var root = new GameObject("Original Industrial Defibrillator Model");
         root.layer = prefab.layer;
         root.transform.SetParent(prefab.transform, false);
-        if (hasBounds && bounds.size.sqrMagnitude > 0.0001f)
-        {
-            root.transform.localPosition = bounds.center;
-            // Fit the original model into the retained native collision shell.
-            float fit = Mathf.Min(bounds.size.x / 0.68f, bounds.size.y / 0.40f, bounds.size.z / 0.28f);
-            root.transform.localScale = Vector3.one * Mathf.Max(0.05f, fit);
-        }
+        root.transform.localPosition = Vector3.zero;
+        root.transform.localScale = Vector3.one * DeviceGeometry.ModelScale;
         var orange = Material(new Color(0.83f, 0.30f, 0.055f), template);
         var rubber = Material(new Color(0.055f, 0.063f, 0.067f), template);
         var metal = Material(new Color(0.58f, 0.63f, 0.65f), template);

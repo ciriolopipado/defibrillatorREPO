@@ -48,6 +48,7 @@ public sealed class Device : MonoBehaviour
         indicators = GetComponentsInChildren<Renderer>(true).Where(renderer => renderer.name.StartsWith("Cell ")).ToArray();
         // Native components must finish Start before interacting with ItemBattery.
         yield return null;
+        GetComponent<Rigidbody>().ResetInertiaTensor();
         started = true;
     }
 

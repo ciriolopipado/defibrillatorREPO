@@ -59,6 +59,7 @@ internal static class ItemFactory
             definition.maxAmountInShop = 1;
             definition.maxPurchase = false;
             definition.minPlayerCount = 1;
+            definition.spawnRotationOffset = Quaternion.identity;
             definition.itemSecretShopType = SemiFunc.itemSecretShopType.none;
             definition.value = ScriptableObject.CreateInstance<Value>();
             definition.value.valueMin = definition.value.valueMax = Plugin.Instance.Settings.Price * 1000f;
@@ -81,6 +82,7 @@ internal static class ItemFactory
             // Retain the native six-bar display layout; consumption is an exact percentage.
             foreach (var light in prefab.GetComponentsInChildren<Light>(true)) light.enabled = false;
             foreach (var text in prefab.GetComponentsInChildren<TMPro.TMP_Text>(true)) text.enabled = false;
+            DevicePhysics.ConfigurePrefab(prefab);
             OriginalAssets.BuildModel(prefab);
             prefab.AddComponent<Device>();
             prefab.SetActive(true);
