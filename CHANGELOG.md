@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.3 — 2026-11-07
+
+### Changed
+
+- Increased default aftershock camera shake from 3.5 / 0.8 seconds to 7 / 1.2 seconds, with a once-only migration of legacy defaults.
+- Added owner-only horizontal aim jolt up to 180 degrees using native additive aim, spread over at most 0.65 seconds. Player input remains available and no camera transform/position is overwritten.
+- Added a configurable 25% host-rolled probability of native Q/tumble posture per eligible aftershock. The host synchronizes the native state and skips already-tumbling players.
+- The forced posture does not trigger the voluntary tumble-launch upgrade, add direct damage or impose an extra get-up timer beyond the native behavior.
+- Added host-verified impact packet fields for signed yaw and tumble choice, using protocol version 2. All players must update together.
+- Preserved the existing electrical visuals, revival, battery, price and compact item physics.
+
+### Validation
+
+- Release build succeeded with zero warnings/errors; 61 core tests and 32 game/Photon API metadata checks passed.
+- The user reported that the previous build worked well overall and the electrical visuals looked good, but the impact felt weak.
+- The stronger jolt, native tumble, host/client presentation and recovery require an in-game retest.
+
 ## 0.1.2 — 2026-11-06
 
 ### Changed

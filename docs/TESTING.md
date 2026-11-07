@@ -2,12 +2,12 @@
 
 ## Evidence
 
-Release compilation, 53 core behavior tests and 28 API metadata checks passed in the development environment.
-All game scenarios below are **unrun for v0.1.2**. The user tested v0.1.0 and reported a confirmed registration failure in donor discovery; shop availability did not pass then. Subsequent tests reported that the object appeared but was oversized, with unrealistic weight and hitboxes. The 0.1.2 physical changes require a new game test. Reference DLLs do not provide a playable game installation.
+Release compilation, 61 core behavior tests and 32 API metadata checks passed in the development environment.
+All game scenarios below are **unrun for v0.1.3**. The user tested v0.1.0 and reported a confirmed registration failure in donor discovery; shop availability did not pass then. Subsequent tests reported that the object appeared but was oversized, with unrealistic weight and hitboxes. The user subsequently reported that the build worked well overall and the shock visuals looked good, but its impact felt weak. This is qualitative feedback, not a completed acceptance matrix. Reference DLLs do not provide a playable game installation.
 
 ## Preparation
 
-Use two players on R.E.P.O. 0.5.1 with the same v0.1.2 test ZIP (remove the old installation first), BepInExPack 5.4.2305 and REPOLib 4.3.0.
+Use two players on R.E.P.O. 0.5.1 with the same v0.1.3 test ZIP (remove the old installation first), BepInExPack 5.4.2305 and REPOLib 4.3.0.
 Create a separate profile and a new save. First test without optional mods.
 Preserve `BepInEx/LogOutput.log` from both machines after the session.
 
@@ -38,7 +38,12 @@ Preserve `BepInEx/LogOutput.log` from both machines after the session.
 | V02 | Start/complete near another player | Charge cue locally; discharge once on nearby clients | Unrun |
 | D01 | Revive and speak over the game voice chat | Every listener hears the same clearly high or low voice; other players remain unchanged | Unrun |
 | D02 | Remain alive for over 180 seconds | Voice returns to normal; aftershocks continue | Unrun |
-| D03 | Wait for 30/60/90 seconds after revival | One visible/audible shock at each interval; affected player's camera shakes; HP remains unchanged | Unrun |
+| D03 | Wait for 30/60/90 seconds after revival | One visible/audible shock at each interval; affected player's camera shakes/turns and may tumble; no direct HP subtraction (isolate from environmental impacts) | Unrun |
+| D07 | Set YawDegrees=180 and TumbleChance=0; observe a shock | Strong shake and approximately 180-degree horizontal turn on target only; input remains usable | Unrun |
+| D08 | Set TumbleChance=1; observe with host/client roles swapped | Native Q posture occurs once and is seen by all; recover with normal controls; no voluntary launch-upgrade impulse | Unrun |
+| D09 | Set YawDegrees=0 and TumbleChance=0 | No forced turn or tumble; existing visuals and configured native shake remain | Unrun |
+| D10 | Shock while target is already tumbling | Does not unfold target or restart native tumble | Unrun |
+| D11 | Open menu, die or leave level during camera turn | Jolt stops without a delayed residual turn on recovery | Unrun |
 | D04 | Observe D03 as another player | Electrical arcs visible on target; observer's camera unaffected | Unrun |
 | D05 | Die again or end the level during either effect | Both effects stop; a later revival rolls a new pitch | Unrun |
 | D06 | Late join while voice effect is active | Same pitch within the next snapshot; original expiry preserved, no replay of past shocks | Unrun |

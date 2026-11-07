@@ -46,7 +46,10 @@ The package icon can be resized from the preserved cover using `bash scripts/cre
 - `NetworkBridge`: REPOLib events, authenticated Photon sender ownership and host-only outcomes.
 - `GameWorld` / `GameAccess`: version-sensitive observations and native revival.
 - `VoiceDebuffs`: host-selected voice/aftershock state, timed native pitch overrides and late-join snapshots.
-- `AftershockVisual`: local camera shake and original electrical arcs; no health, stun or physics calls.
+- `AftershockVisual`: existing local native shake and original electrical arcs.
+- `AftershockCamera`: owner-only incremental native additive yaw; stops on death, menus or level exit, and does not lock input.
+- `AftershockImpact`: bounded yaw curve, probability boundaries and once-only weak-shake migration.
+- Native Q posture is applied once by the host through `PlayerTumble.TumbleSet(true, false)`, avoiding the voluntary launch upgrade. Impact packets use protocol 2 and carry the host-selected signed angle and boolean decision.
 - `OriginalAssets`: original visuals and audio synthesis.
 
 Client requests cannot set charge, health, position, elapsed time or range. The host observes those independently.

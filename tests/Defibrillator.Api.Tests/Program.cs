@@ -28,7 +28,9 @@ var methods = new (string Type, string Method, int Arguments)[]
     ("PlayerVoiceChat", "Update", 0),
     ("PlayerVoiceChat", "OverridePitch", 6),
     ("CameraShake", "Shake", 3),
-    ("PhysGrabObject", "Awake", 0)
+    ("PhysGrabObject", "Awake", 0),
+    ("CameraAim", "AdditiveAimX", 1),
+    ("PlayerTumble", "TumbleSet", 3)
 };
 foreach (var required in methods)
 {
@@ -41,6 +43,7 @@ foreach (var required in methods)
 var fields = new (string Type, string Field)[]
 {
     ("PlayerAvatar", "isDisabled"), ("PlayerAvatar", "deadSet"),
+    ("PlayerAvatar", "tumble"), ("PlayerAvatar", "isTumbling"),
     ("PlayerAvatar", "playerDeathHead"), ("PlayerAvatar", "clientCameraPosition"),
     ("PlayerAvatar", "clientCameraRotation"), ("PlayerHealth", "health"),
     ("ItemAttributes", "shopItem"), ("ItemAttributes", "value"),

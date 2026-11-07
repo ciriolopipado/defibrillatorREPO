@@ -11,7 +11,7 @@ namespace Defibrillator.Mod;
 public sealed class Plugin : BaseUnityPlugin
 {
     public const string Id = "ciriolopipado.defibrillator";
-    public const string Version = "0.1.2";
+    public const string Version = "0.1.3";
     internal static Plugin Instance = null!;
     internal Settings Settings = null!;
     internal NetworkBridge Network = null!;
@@ -53,8 +53,23 @@ public sealed class Plugin : BaseUnityPlugin
             VoiceDebuffs.HighPitch = Config.Bind("VoiceDebuff", "HighPitch", 1.8f, "Comically high voice multiplier, above 1 and up to 2.").Value;
             VoiceDebuffs.LowPitch = Config.Bind("VoiceDebuff", "LowPitch", 0.55f, "Comically low voice multiplier, at least 0.5 and below 1.").Value;
             VoiceDebuffs.ShockInterval = Config.Bind("Aftershock", "IntervalSeconds", 30d, "Harmless shock interval, 5–300 seconds; ends at death or level end.").Value;
-            VoiceDebuffs.ShakeStrength = Config.Bind("Aftershock", "CameraShakeStrength", 3.5f, "Camera shake strength, 0–10; respects native camera-shake settings.").Value;
-            VoiceDebuffs.ShakeSeconds = Config.Bind("Aftershock", "CameraShakeSeconds", 0.8f, "Camera shake duration, 0.1–2 seconds.").Value;
+            var shakeStrength = Config.Bind("Aftershock", "CameraShakeStrength", 7f, "Camera shake strength, 0–10; respects native camera-shake settings.");
+            var shakeSeconds = Config.Bind("Aftershock", "CameraShakeSeconds", 1.2f, "Camera shake duration, 0.1–2 seconds.");
+            var impactRevision = Config.Bind("Internal", "AftershockRevision", 0, "Once-only upgrade of old weak shake defaults.");
+            if (impactRevision.Value < 1)
+            {
+                var upgraded = AftershockImpact.UpgradeLegacy(impactRevision.Value, shakeStrength.Value, shakeSeconds.Value);
+                shakeStrength.Value = upgraded.Strength;
+                shakeSeconds.Value = upgraded.Seconds;
+                impactRevision.Value = 1;
+                Config.Save();
+            }
+            VoiceDebuffs.ShakeStrength = shakeStrength.Value;
+            VoiceDebuffs.ShakeSeconds = shakeSeconds.Value;
+            VoiceDebuffs.YawDegrees = Config.Bind("Aftershock", "YawDegrees", 180f, "Horizontal turn per shock, 0–180 degrees; random left/right. Set 0 to disable turning.").Value;
+            VoiceDebuffs.TumbleChance = Config.Bind("Aftershock", "TumbleChance", 0.25d, "Probability of native Q/tumble per shock, 0–1; 0 disables, 1 always triggers.").Value;
+            _ = AftershockImpact.YawAt(VoiceDebuffs.YawDegrees, 0);
+            _ = AftershockImpact.RollTumble(0, VoiceDebuffs.TumbleChance);
             _ = VoiceEffect.ChoosePitch(0, VoiceDebuffs.HighPitch, VoiceDebuffs.LowPitch);
             if (double.IsNaN(VoiceDebuffs.Seconds) || double.IsInfinity(VoiceDebuffs.Seconds) ||
                 VoiceDebuffs.Seconds < 1 || VoiceDebuffs.Seconds > 3600 ||

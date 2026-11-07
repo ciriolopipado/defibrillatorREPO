@@ -1,12 +1,12 @@
-# Validation record — 0.1.2
+# Validation record — 0.1.3
 
 ## Completed locally
 
 - SDK: .NET 8.0.427, Linux x64.
 - Target framework: netstandard2.1 for plugin/core; net8.0 for test runners.
 - Plugin: Release compilation against user-supplied Managed assemblies, zero warnings and zero errors.
-- Core behavior runner: **53 executed, 53 passed, 0 failed**.
-- Game API metadata runner: **28 executed, 28 passed, 0 failed**.
+- Core behavior runner: **61 executed, 61 passed, 0 failed**.
+- Game API metadata runner: **32 executed, 32 passed, 0 failed**.
 - Tests include one-HP revival, two default battery uses and configurable capacity, one-time balance migration, compact collision envelope, cancellation, concurrency, repeated death identities, voice expiry, lifetime boundaries, shock intervals and no catch-up bursts.
 - API checks validate every Harmony target's method arity, required private fields, native pitch/camera methods and the reflective shop method's ref-int parameter.
 - Game-reference fingerprints are recorded separately; no reference DLLs are distributed.
@@ -25,9 +25,15 @@ The user subsequently reported an enormous visible object with unrealistic weigh
 The model previously scaled from donor renderer bounds and retained native donor collision. `NotValuableObject.Start` also reapplies mass from its physics preset. The new implementation uses fixed compact model coordinates and matching compound boxes, updates the private mass preset, and normalizes the saved scale payload before native physics bounds are calculated.
 Nominal mass is 3 Unity mass units (conventionally kilograms), with an approximately 35 cm width. These are configured values, not measured in-game outcomes. Weight feel, collision response, shelf/floor placement and old-save restoration remain unverified.
 
+## Aftershock feedback and 0.1.3 changes
+
+The user reported that the preceding build worked well overall and its shock visuals looked good, while the physical/camera impact was too weak. They requested significant horizontal camera motion up to 180 degrees and a probability of the native Q posture.
+The game source identifies Q as tumble, not literal character scaling. The new host policy uses a 25% default probability and synchronizes the native posture with `TumbleSet(true, false)`. Camera yaw is owner-local via `AdditiveAimX`, with no input lock. Tests check probability boundaries, bounded turn totals at variable frame rates, and migration of weak defaults. Metadata checks cover both native APIs and the target avatar fields.
+Visual presentation, native recovery, indirect environmental interactions and camera response must still be observed in multiplayer.
+
 ## Not established
 
-No R.E.P.O. executable was run in this development environment, and v0.1.2 has not been retested by the user yet. Automated tests do not establish actual RPC delivery, microphone/audio behavior, camera presentation, shader appearance, save compatibility, shop interaction or charger behavior.
+No R.E.P.O. executable was run in this development environment, and v0.1.3 has not been retested by the user yet. Automated tests do not establish actual RPC delivery, microphone/audio behavior, camera presentation, shader appearance, save compatibility, shop interaction or charger behavior.
 The complete supplied mod profile, late joining, host migration and actual multiplayer revival remain untested.
 An optional core CI workflow template is included under `docs/ci`; it is not active CI. No remote CI run has been observed.
 - The complete source, original icon and test ZIP were uploaded to `feature/defibrillator-source`. Direct pushes to `main` were rejected with `fatal error in commit_refs_rules`; the server supplied no root cause.

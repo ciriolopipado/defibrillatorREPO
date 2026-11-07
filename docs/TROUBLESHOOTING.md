@@ -47,6 +47,12 @@ Legacy configuration defaults migrate once: `Price=0` becomes `2`, and `CostPerc
 If you intentionally want different values after migration, edit the config with the game closed. Do not enter `Price=2000` for 2k: the correct value is `2`.
 All players must replace both DLLs with the same version. Physical geometry/mass are fixed rather than independently configurable on each client.
 
+## Stronger aftershocks in 0.1.3
+
+Q corresponds to the native tumble posture. Default aftershocks now turn horizontal aim by 180 degrees over a short interval and have a 25% chance to request that posture on the host.
+Use `YawDegrees=0` to disable the separate turn, and `TumbleChance=0` / `1` to disable / guarantee posture for testing. Native shake continues to respect the game's shake setting; forced yaw is separately configurable. Legacy 3.5 / 0.8 shake defaults are upgraded once to 7 / 1.2.
+All clients and the host must install 0.1.3 because the impact event now uses protocol version 2. No direct health damage is called; native posture, recovery and environmental interactions remain game behavior.
+
 ## Determine which stage failed
 
 Read `BepInEx/LogOutput.log` from the actual Thunderstore profile used by the **host**.
@@ -56,7 +62,7 @@ The presence of a different revival item is insufficient to diagnose plugin load
 | --- | --- |
 | No mention of Industrial Defibrillator or its plugin ID | Check installation, selected profile, loader discovery errors and dependency errors. Do not assume a specific cause yet. |
 | `Defibrillator initialization failed; features disabled.` | Inspect the complete following exception; configuration, dependency or API initialization failed. |
-| `Industrial Defibrillator 0.1.2 loaded.` | Plugin initialization completed; this alone does not confirm item registration or spawning. |
+| `Industrial Defibrillator 0.1.3 loaded.` | Plugin initialization completed; this alone does not confirm item registration or spawning. |
 | `Registered Industrial Defibrillator using native shell:` | REPOLib accepted the custom prefab/definition. |
 | `Item registration failed; no replacement of vanilla items was attempted.` | Inspect the following exception to identify donor discovery, prefab construction or REPOLib registration failure. |
 | `Reserved one defibrillator shop slot at price 2.` | The host's native shop-spawn method accepted the custom item or queued its spawn. This alone does not prove the instantiated object completed startup. |

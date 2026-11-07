@@ -10,7 +10,7 @@ namespace Defibrillator.Mod;
 
 internal sealed class NetworkBridge
 {
-    private const string Protocol = Plugin.Id + "/1";
+    private const string Protocol = Plugin.Id + "/2";
     private readonly NetworkedEvent channel;
     internal NetworkBridge() => channel = new NetworkedEvent(Protocol, Receive);
 
@@ -49,13 +49,14 @@ internal sealed class NetworkBridge
             }
             if (operation == 5)
             {
-                if (data.Length != 7 || PhotonNetwork.MasterClient == null ||
+                if (data.Length != 9 || PhotonNetwork.MasterClient == null ||
                     packet.Sender != PhotonNetwork.MasterClient.ActorNumber ||
                     data[2] is not int target || target <= 0 || data[3] is not string token || token.Length > 64 ||
                     data[4] is not int sequence || sequence <= 0 || data[5] is not float strength ||
                     data[6] is not float seconds || float.IsNaN(strength) || strength < 0 || strength > 10 ||
-                    float.IsNaN(seconds) || seconds < 0.1f || seconds > 2) return;
-                VoiceDebuffs.Shock(target, token, sequence, strength, seconds);
+                    float.IsNaN(seconds) || seconds < 0.1f || seconds > 2 ||
+                    data[7] is not float yaw || float.IsNaN(yaw) || System.Math.Abs(yaw) > 180 || data[8] is not bool tumble) return;
+                VoiceDebuffs.Shock(target, token, sequence, strength, seconds, yaw, tumble);
                 return;
             }
             if (operation == 4)
@@ -122,9 +123,9 @@ internal sealed class NetworkBridge
     internal void RequestVoiceSnapshot() => channel.RaiseEvent(new object[] { Protocol, 4 },
         NetworkingEvents.RaiseMasterClient, SendOptions.SendReliable);
 
-    internal void SendShock(int target, string token, int sequence, float strength, float seconds)
+    internal void SendShock(int target, string token, int sequence, float strength, float seconds, float yaw, bool tumble)
     {
         if (SemiFunc.IsMultiplayer()) channel.RaiseEvent(new object[] { Protocol, 5, target, token,
-            sequence, strength, seconds }, NetworkingEvents.RaiseOthers, SendOptions.SendReliable);
+            sequence, strength, seconds, yaw, tumble }, NetworkingEvents.RaiseOthers, SendOptions.SendReliable);
     }
 }

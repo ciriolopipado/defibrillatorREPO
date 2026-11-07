@@ -19,6 +19,8 @@ internal static class VoiceDebuffs
     internal static double ShockInterval;
     internal static float ShakeStrength;
     internal static float ShakeSeconds;
+    internal static float YawDegrees;
+    internal static double TumbleChance;
     private static float nextSnapshotRequest;
     private static object? previousRoom;
     private static readonly System.Reflection.FieldInfo VoicePlayer = AccessTools.Field(typeof(PlayerVoiceChat), "playerAvatar")
@@ -60,8 +62,10 @@ internal static class VoiceDebuffs
             }
             if (SemiFunc.IsMasterClientOrSingleplayer() && pair.Value.TryShock(Now, Round, true))
             {
-                Shock(pair.Key, pair.Value.Token, pair.Value.Sequence, ShakeStrength, ShakeSeconds);
-                Plugin.Instance.Network.SendShock(pair.Key, pair.Value.Token, pair.Value.Sequence, ShakeStrength, ShakeSeconds);
+                float yaw = YawDegrees * (UnityEngine.Random.Range(0, 2) == 0 ? -1 : 1);
+                bool tumble = AftershockImpact.RollTumble(UnityEngine.Random.Range(0, 1000000) / 1000000d, TumbleChance);
+                Shock(pair.Key, pair.Value.Token, pair.Value.Sequence, ShakeStrength, ShakeSeconds, yaw, tumble);
+                Plugin.Instance.Network.SendShock(pair.Key, pair.Value.Token, pair.Value.Sequence, ShakeStrength, ShakeSeconds, yaw, tumble);
             }
         }
         // Snapshots recover late joins, delayed prefab creation and host changes.
@@ -102,7 +106,7 @@ internal static class VoiceDebuffs
         seenPulses[effect.Token] = Math.Max(effect.Sequence, seenPulses.TryGetValue(effect.Token, out var previousSequence) ? previousSequence : 0);
     }
 
-    internal static void Shock(int target, string token, int sequence, float strength, float seconds)
+    internal static void Shock(int target, string token, int sequence, float strength, float seconds, float yaw, bool tumble)
     {
         if (!Effects.TryGetValue(target, out var effect) || effect.Token != token ||
             (seenPulses.TryGetValue(token, out var previous) && sequence <= previous)) return;
@@ -110,6 +114,13 @@ internal static class VoiceDebuffs
         if (!player || !effect.IsActive(Now, Round, GameAccess.IsAlive(player))) return;
         seenPulses[token] = sequence;
         AftershockVisual.Spawn(player, sequence, strength, seconds);
+        AftershockCamera.Spawn(player, yaw, seconds);
+        if (tumble && SemiFunc.IsMasterClientOrSingleplayer() && !GameAccess.IsTumbling(player))
+        {
+            var nativeTumble = GameAccess.Tumble(player);
+            // Forced native Q posture, without triggering the voluntary tumble-launch upgrade.
+            if (nativeTumble) nativeTumble!.TumbleSet(true, false);
+        }
     }
 
     internal static void Apply(PlayerVoiceChat voice)

@@ -4,6 +4,52 @@ using Defibrillator.Core;
 
 var tests = new (string Name, Action Run)[]
 {
+    ("Tumble roll respects disabled and guaranteed probabilities", () =>
+    {
+        Equal(false, AftershockImpact.RollTumble(0, 0));
+        Equal(true, AftershockImpact.RollTumble(0.999999, 1));
+    }),
+    ("Quarter probability uses an exclusive upper threshold", () =>
+    {
+        Equal(true, AftershockImpact.RollTumble(0.249999, 0.25));
+        Equal(false, AftershockImpact.RollTumble(0.25, 0.25));
+    }),
+    ("Invalid tumble probabilities and samples fail closed", () =>
+    {
+        Throws<ArgumentOutOfRangeException>(() => AftershockImpact.RollTumble(0, double.NaN));
+        Throws<ArgumentOutOfRangeException>(() => AftershockImpact.RollTumble(1, 0.25));
+        Throws<ArgumentOutOfRangeException>(() => AftershockImpact.RollTumble(0, -0.1));
+    }),
+    ("Horizontal jolt starts at zero and ends at signed 180 degrees", () =>
+    {
+        Equal(0f, AftershockImpact.YawAt(180, 0)); Equal(180f, AftershockImpact.YawAt(180, 1));
+        Equal(-180f, AftershockImpact.YawAt(-180, 1)); Equal(0f, AftershockImpact.YawAt(0, 0.5));
+    }),
+    ("Low frame rates cannot overshoot the configured camera turn", () =>
+    {
+        Equal(180f, AftershockImpact.YawAt(180, 2)); Equal(0f, AftershockImpact.YawAt(180, -1));
+        Throws<ArgumentOutOfRangeException>(() => AftershockImpact.YawAt(181, 1));
+        Throws<ArgumentOutOfRangeException>(() => AftershockImpact.YawAt(90, double.NaN));
+    }),
+    ("Incremental camera steps sum to the requested angle", () =>
+    {
+        float delivered = 0, sum = 0;
+        foreach (double t in new[] { 0.05, 0.2, 0.55, 0.9, 1.2 })
+        { float next = AftershockImpact.YawAt(-180, t); sum += next - delivered; delivered = next; }
+        Equal(-180f, sum);
+    }),
+    ("Old weak shake defaults upgrade once", () =>
+    {
+        var result = AftershockImpact.UpgradeLegacy(0, 3.5f, 0.8f);
+        Equal(7f, result.Strength); Equal(1.2f, result.Seconds);
+        var manual = AftershockImpact.UpgradeLegacy(1, 3.5f, 0.8f);
+        Equal(3.5f, manual.Strength); Equal(0.8f, manual.Seconds);
+    }),
+    ("Aftershock upgrade preserves custom shake values", () =>
+    {
+        var result = AftershockImpact.UpgradeLegacy(0, 4f, 1.5f);
+        Equal(4f, result.Strength); Equal(1.5f, result.Seconds);
+    }),
     ("New balance defaults are 2k and two revivals per charge", () =>
     {
         var settings = new Settings(); Equal(2, settings.Price); Equal(50, settings.BatteryCost);
