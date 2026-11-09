@@ -6,7 +6,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
     <AssemblyName>Defibrillator</AssemblyName>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
     <GameReferencePath Condition="'$(GameReferencePath)' == ''">$(MSBuildThisFileDirectory)../../local-libs</GameReferencePath>
   </PropertyGroup>
   <ItemGroup>

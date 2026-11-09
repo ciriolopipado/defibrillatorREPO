@@ -68,7 +68,7 @@ The presence of a different revival item is insufficient to diagnose plugin load
 | --- | --- |
 | No mention of Industrial Defibrillator or its plugin ID | Check installation, selected profile, loader discovery errors and dependency errors. Do not assume a specific cause yet. |
 | `Defibrillator initialization failed; features disabled.` | Inspect the complete following exception; configuration, dependency or API initialization failed. |
-| `Industrial Defibrillator 0.1.4 loaded.` | Plugin initialization completed; this alone does not confirm item registration or spawning. |
+| `Industrial Defibrillator 0.1.5 loaded.` | Plugin initialization completed; this alone does not confirm item registration or spawning. |
 | `Registered Industrial Defibrillator using native shell:` | REPOLib accepted the custom prefab/definition. |
 | `Item registration failed; no replacement of vanilla items was attempted.` | Inspect the following exception to identify donor discovery, prefab construction or REPOLib registration failure. |
 | `Reserved one defibrillator shop slot at price 2.` | The host's native shop-spawn method accepted the custom item or queued its spawn. This alone does not prove the instantiated object completed startup. |

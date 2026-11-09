@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.5 — 2026-11-09
+
+### Changed
+
+- Updated plugin, core assembly and Thunderstore package versions to 0.1.5.
+- Rebuilt the local test archive and checksum; gameplay behavior, protocol 3 and bundled audio are unchanged from 0.1.4.
+
 ## 0.1.4 — 2026-11-09
 
 ### Added

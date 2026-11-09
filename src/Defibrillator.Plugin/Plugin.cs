@@ -11,7 +11,7 @@ namespace Defibrillator.Mod;
 public sealed class Plugin : BaseUnityPlugin
 {
     public const string Id = "ciriolopipado.defibrillator";
-    public const string Version = "0.1.4";
+    public const string Version = "0.1.5";
     internal static Plugin Instance = null!;
     internal Settings Settings = null!;
     internal NetworkBridge Network = null!;

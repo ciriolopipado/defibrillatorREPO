@@ -3,11 +3,11 @@
 ## Evidence
 
 Release compilation, 69 core behavior tests and 44 API/embedded-resource checks passed in the development environment.
-All game scenarios below are **unrun for v0.1.4**. The user tested v0.1.0 and reported a confirmed registration failure in donor discovery; shop availability did not pass then. Subsequent tests reported that the object appeared but was oversized, with unrealistic weight and hitboxes. The user subsequently reported that the build worked well overall and the shock visuals looked good, but its impact felt weak. This is qualitative feedback, not a completed acceptance matrix. Reference DLLs do not provide a playable game installation.
+All game scenarios below are **unrun for v0.1.5**. The user tested v0.1.0 and reported a confirmed registration failure in donor discovery; shop availability did not pass then. Subsequent tests reported that the object appeared but was oversized, with unrealistic weight and hitboxes. The user subsequently reported that the build worked well overall and the shock visuals looked good, but its impact felt weak. This is qualitative feedback, not a completed acceptance matrix. Reference DLLs do not provide a playable game installation.
 
 ## Preparation
 
-Use two players on R.E.P.O. 0.5.1 with the same v0.1.4 test ZIP (remove the old installation first), BepInExPack 5.4.2305 and REPOLib 4.3.0.
+Use two players on R.E.P.O. 0.5.1 with the same v0.1.5 test ZIP (remove the old installation first), BepInExPack 5.4.2305 and REPOLib 4.3.0.
 Create a separate profile and a new save. First test without optional mods.
 Preserve `BepInEx/LogOutput.log` from both machines after the session.
 

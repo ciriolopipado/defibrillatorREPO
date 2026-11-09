@@ -1,4 +1,6 @@
-# Validation record — 0.1.4
+# Validation record — 0.1.5
+
+Version 0.1.5 is a version-only rebuild of 0.1.4; gameplay, protocol and audio assets are unchanged. Core test results below were established for the unchanged logic in 0.1.4. The 0.1.5 Release build and packaged metadata/resources are checked again.
 
 ## Completed locally
 
@@ -39,7 +41,7 @@ Source attributions and the blocked online license-check result are in `docs/AUD
 
 ## Not established
 
-No R.E.P.O. executable was run in this development environment, and v0.1.4 has not been retested by the user yet. Automated tests do not establish actual RPC delivery, microphone/audio behavior, camera presentation, shader appearance, save compatibility, shop interaction or charger behavior.
+No R.E.P.O. executable was run in this development environment, and v0.1.5 has not been retested by the user yet. Automated tests do not establish actual RPC delivery, microphone/audio behavior, camera presentation, shader appearance, save compatibility, shop interaction or charger behavior.
 The complete supplied mod profile, late joining, host migration and actual multiplayer revival remain untested.
 An optional core CI workflow template is included under `docs/ci`; it is not active CI. No remote CI run has been observed.
 - The complete source, original icon and test ZIP were uploaded to `feature/defibrillator-source`. Direct pushes to `main` were rejected with `fatal error in commit_refs_rules`; the server supplied no root cause.

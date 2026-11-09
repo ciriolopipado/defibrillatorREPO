@@ -4,7 +4,7 @@
 
 *Promotional illustration; in-game visuals use the procedural model described below.*
 
-**0.1.4 is an experimental test candidate, not a verified stable release.**
+**0.1.5 is an experimental test candidate, not a verified stable release.**
 The plugin compiles against the Managed references supplied for R.E.P.O. 0.5.1.
 Automated core and API metadata checks pass. The game has not been run in this environment.
 
@@ -17,7 +17,7 @@ Automated core and API metadata checks pass. The game has not been run in this e
 
 ## Install the local test build
 
-1. Download `releases/Industrial_Defibrillator-0.1.4.zip` from this repository.
+1. Download `releases/Industrial_Defibrillator-0.1.5.zip` from this repository.
 2. Create a separate Thunderstore Mod Manager profile and install the two dependencies above.
 3. Use **Settings > Import local mod** if available. Alternatively, open the profile folder and extract the ZIP's `BepInEx` directory into it.
 4. Remove/disable the previous mod installation before installing this update. Check that `Defibrillator.dll` and `Defibrillator.Core.dll` are together in `BepInEx/plugins/IndustrialDefibrillator/`.
@@ -92,7 +92,7 @@ Volume = 0.7
 
 On first upgrade to 0.1.2, legacy defaults `Price=0` and `CostPercent=25` migrate to `2` and `50`. Other custom values remain unchanged. The internal balance revision prevents repeated migrations; after migration, manual settings are respected. Keep your existing configuration file to retain voice and aftershock preferences.
 
-On first upgrade to 0.1.3, legacy shake defaults `3.5` / `0.8` migrate once to `7` / `1.2`; other custom shake values remain unchanged. `TumbleChance=0` disables folding and `1` makes it happen on every eligible shock. All players must update together: the impact event in 0.1.3 uses protocol version 2. Version 0.1.4 adds animal events/snapshot state with protocol version 3: all players must install 0.1.4 together.
+On first upgrade to 0.1.3, legacy shake defaults `3.5` / `0.8` migrate once to `7` / `1.2`; other custom shake values remain unchanged. `TumbleChance=0` disables folding and `1` makes it happen on every eligible shock. All players must update together: the impact event in 0.1.3 uses protocol version 2. Version 0.1.4 adds animal events/snapshot state with protocol version 3: all players must install 0.1.5 together.
 
 Price uses displayed shop currency units (`2` means **2k**, not `2000`). Invalid values disable the plugin with an error log.
 
