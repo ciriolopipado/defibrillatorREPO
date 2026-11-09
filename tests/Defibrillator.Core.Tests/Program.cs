@@ -4,6 +4,74 @@ using Defibrillator.Core;
 
 var tests = new (string Name, Action Run)[]
 {
+    ("All four bundled animal recordings are valid non-silent PCM clips at most three seconds", () =>
+    {
+        foreach (string name in new[] { "sheep", "cat", "dog", "horse" })
+        {
+            using var file = System.IO.File.OpenRead("assets/audio/" + name + ".wav");
+            var wave = PcmWave.Read(file);
+            Equal(44100, wave.SampleRate);
+            if (wave.Seconds <= 0 || wave.Seconds > 3) throw new Exception("Invalid duration: " + name);
+            float peak = 0; foreach (float sample in wave.Samples) peak = Math.Max(peak, Math.Abs(sample));
+            if (peak < 0.01f || peak >= 1) throw new Exception("Silent or clipped audio: " + name);
+        }
+    }),
+    ("Animal decoder rejects a truncated recording", () =>
+    {
+        var bytes = System.IO.File.ReadAllBytes("assets/audio/cat.wav");
+        using var stream = new System.IO.MemoryStream(bytes, 0, bytes.Length - 2);
+        Throws<System.IO.InvalidDataException>(() => PcmWave.Read(stream));
+    }),
+    ("Animal decoder rejects a renamed MP3 or arbitrary bytes", () =>
+    {
+        using var stream = new System.IO.MemoryStream(new byte[100]);
+        Throws<System.IO.InvalidDataException>(() => PcmWave.Read(stream));
+    }),
+    ("Animal decoder enforces the three-second limit", () =>
+    {
+        using var stream = new System.IO.MemoryStream();
+        using (var writer = new System.IO.BinaryWriter(stream, System.Text.Encoding.ASCII, true))
+        {
+            int size = 44100 * 4 * 2;
+            writer.Write(System.Text.Encoding.ASCII.GetBytes("RIFF")); writer.Write(36 + size);
+            writer.Write(System.Text.Encoding.ASCII.GetBytes("WAVEfmt ")); writer.Write(16);
+            writer.Write((short)1); writer.Write((short)1); writer.Write(44100); writer.Write(88200);
+            writer.Write((short)2); writer.Write((short)16);
+            writer.Write(System.Text.Encoding.ASCII.GetBytes("data")); writer.Write(size); writer.Write(new byte[size]);
+        }
+        stream.Position = 0;
+        Throws<System.IO.InvalidDataException>(() => PcmWave.Read(stream));
+    }),
+    ("Animal timer begins at thirty seconds independently of the electrical timer", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 10, 10, "round", "token", nextAnimalAt: 30);
+        Equal(true, effect.TryShock(10, "round", true));
+        Equal(false, effect.TryAnimal(29.99, "round", true));
+        Equal(true, effect.TryAnimal(30, "round", true)); Equal(1, effect.AnimalSequence);
+        Equal(false, effect.TryAnimal(30, "round", true));
+        Equal(true, effect.TryAnimal(60, "round", true)); Equal(2, effect.AnimalSequence);
+    }),
+    ("Animal timer avoids catch-up bursts and continues after comic pitch expires", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 30, 30, "round", "token");
+        Equal(true, effect.TryAnimal(210, "round", true)); Equal(240d, effect.NextAnimalAt);
+        Equal(false, effect.TryAnimal(210, "round", true)); Equal(false, effect.HasVoice(210, "round", true));
+    }),
+    ("Death and level end cancel animal emissions", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 30, 30, "round", "token");
+        Equal(false, effect.TryAnimal(30, "round", false));
+        Equal(false, effect.TryAnimal(30, "next", true)); Equal(0, effect.AnimalSequence);
+    }),
+    ("Animal snapshot preserves future schedule without replaying old emissions", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 30, 30, "round", "token");
+        effect.TryAnimal(30, "round", true);
+        var copy = new VoiceEffect(effect.Pitch, effect.VoiceExpiresAt, effect.NextShockAt, effect.ShockInterval,
+            effect.Round, effect.Token, effect.Sequence, effect.NextAnimalAt, effect.AnimalInterval, effect.AnimalSequence);
+        Equal(1, copy.AnimalSequence); Equal(false, copy.TryAnimal(59, "round", true));
+        Equal(true, copy.TryAnimal(60, "round", true)); Equal(2, copy.AnimalSequence);
+    }),
     ("Tumble roll respects disabled and guaranteed probabilities", () =>
     {
         Equal(false, AftershockImpact.RollTumble(0, 0));

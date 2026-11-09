@@ -10,11 +10,15 @@ public sealed class VoiceEffect
     public double NextShockAt { get; private set; }
     public double ShockInterval { get; }
     public int Sequence { get; private set; }
+    public double NextAnimalAt { get; private set; }
+    public double AnimalInterval { get; }
+    public int AnimalSequence { get; private set; }
     public string Round { get; }
     public string Token { get; }
 
     public VoiceEffect(float pitch, double voiceExpiresAt, double nextShockAt,
-        double shockInterval, string round, string token, int sequence = 0)
+        double shockInterval, string round, string token, int sequence = 0,
+        double? nextAnimalAt = null, double animalInterval = 30, int animalSequence = 0)
     {
         if (!Settings.Finite(pitch) || pitch < 0.5f || pitch > 2f) throw new ArgumentOutOfRangeException(nameof(pitch));
         if (!Settings.Finite(voiceExpiresAt) || voiceExpiresAt < 0) throw new ArgumentOutOfRangeException(nameof(voiceExpiresAt));
@@ -23,6 +27,9 @@ public sealed class VoiceEffect
         if (string.IsNullOrWhiteSpace(round)) throw new ArgumentException("A round identity is required.", nameof(round));
         if (string.IsNullOrWhiteSpace(token)) throw new ArgumentException("An effect identity is required.", nameof(token));
         if (sequence < 0) throw new ArgumentOutOfRangeException(nameof(sequence));
+        if (!Settings.Finite(animalInterval) || animalInterval < 5 || animalInterval > 300 ||
+            !Settings.Finite(nextAnimalAt ?? nextShockAt) || (nextAnimalAt ?? nextShockAt) < 0 || animalSequence < 0)
+            throw new ArgumentOutOfRangeException(nameof(animalInterval));
         Pitch = pitch;
         VoiceExpiresAt = voiceExpiresAt;
         NextShockAt = nextShockAt;
@@ -30,6 +37,9 @@ public sealed class VoiceEffect
         Round = round;
         Token = token;
         Sequence = sequence;
+        NextAnimalAt = nextAnimalAt ?? nextShockAt;
+        AnimalInterval = animalInterval;
+        AnimalSequence = animalSequence;
     }
 
     public bool IsActive(double now, string round, bool playerAlive) => Settings.Finite(now) && Round == round && playerAlive;
@@ -41,6 +51,14 @@ public sealed class VoiceEffect
         if (!IsActive(now, round, playerAlive) || now < NextShockAt) return false;
         NextShockAt = now + ShockInterval;
         Sequence = checked(Sequence + 1);
+        return true;
+    }
+
+    public bool TryAnimal(double now, string round, bool playerAlive)
+    {
+        if (!IsActive(now, round, playerAlive) || now < NextAnimalAt) return false;
+        NextAnimalAt = now + AnimalInterval;
+        AnimalSequence = checked(AnimalSequence + 1);
         return true;
     }
 

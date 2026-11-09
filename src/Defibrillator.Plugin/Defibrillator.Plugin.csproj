@@ -6,10 +6,11 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
     <AssemblyName>Defibrillator</AssemblyName>
-    <Version>0.1.3</Version>
+    <Version>0.1.4</Version>
     <GameReferencePath Condition="'$(GameReferencePath)' == ''">$(MSBuildThisFileDirectory)../../local-libs</GameReferencePath>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="../../assets/audio/*.wav" LogicalName="Defibrillator.Animals.%(Filename)%(Extension)" />
     <ProjectReference Include="../Defibrillator.Core/Defibrillator.Core.csproj" />
     <Reference Include="Assembly-CSharp" HintPath="$(GameReferencePath)/Assembly-CSharp.dll" Private="false" />
     <Reference Include="BepInEx" HintPath="$(GameReferencePath)/BepInEx.dll" Private="false" />

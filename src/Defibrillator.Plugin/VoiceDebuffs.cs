@@ -13,6 +13,10 @@ internal static class VoiceDebuffs
     internal static readonly Dictionary<int, VoiceEffect> Effects = new Dictionary<int, VoiceEffect>();
     private static readonly Dictionary<string, int> seenPulses = new Dictionary<string, int>();
     private static readonly HashSet<string> endedTokens = new HashSet<string>();
+    private static readonly Dictionary<string, int> seenAnimals = new Dictionary<string, int>();
+    internal static bool AnimalEnabled;
+    internal static double AnimalInterval;
+    internal static float AnimalVolume;
     internal static double Seconds;
     internal static float HighPitch;
     internal static float LowPitch;
@@ -34,9 +38,11 @@ internal static class VoiceDebuffs
         if (!SemiFunc.IsMasterClientOrSingleplayer()) return;
         EnsureRoom();
         var effect = new VoiceEffect(VoiceEffect.ChoosePitch(UnityEngine.Random.Range(0, 2), HighPitch, LowPitch),
-            Now + Seconds, Now + ShockInterval, ShockInterval, Round, Guid.NewGuid().ToString("N"));
+            Now + Seconds, Now + ShockInterval, ShockInterval, Round, Guid.NewGuid().ToString("N"),
+            nextAnimalAt: Now + AnimalInterval, animalInterval: AnimalInterval);
         Effects[target] = effect;
         seenPulses[effect.Token] = 0;
+        seenAnimals[effect.Token] = 0;
         Plugin.Instance.Network.SendVoice(target, effect);
         Plugin.LogInfo("Revival aftereffects applied: target=" + target + ", pitch=" + effect.Pitch + ", voiceSeconds=" + Seconds);
     }
@@ -44,7 +50,7 @@ internal static class VoiceDebuffs
     internal static void Tick()
     {
         EnsureRoom();
-        if (!SemiFunc.RunIsLevel()) { Effects.Clear(); seenPulses.Clear(); endedTokens.Clear(); return; }
+        if (!SemiFunc.RunIsLevel()) { AnimalVoicePlayback.StopAll(); Effects.Clear(); seenPulses.Clear(); seenAnimals.Clear(); endedTokens.Clear(); return; }
         foreach (var pair in Effects.ToArray())
         {
             var player = GameAccess.FindPlayer(pair.Key);
@@ -67,6 +73,13 @@ internal static class VoiceDebuffs
                 Shock(pair.Key, pair.Value.Token, pair.Value.Sequence, ShakeStrength, ShakeSeconds, yaw, tumble);
                 Plugin.Instance.Network.SendShock(pair.Key, pair.Value.Token, pair.Value.Sequence, ShakeStrength, ShakeSeconds, yaw, tumble);
             }
+            if (SemiFunc.IsMasterClientOrSingleplayer() && AnimalEnabled && AnimalClips.Ready && pair.Value.TryAnimal(Now, Round, true))
+            {
+                int animal = UnityEngine.Random.Range(0, 4);
+                double at = Now;
+                Animal(pair.Key, pair.Value.Token, pair.Value.AnimalSequence, animal, at);
+                Plugin.Instance.Network.SendAnimal(pair.Key, pair.Value.Token, pair.Value.AnimalSequence, animal, at);
+            }
         }
         // Snapshots recover late joins, delayed prefab creation and host changes.
         if (SemiFunc.IsMultiplayer() && !PhotonNetwork.IsMasterClient && Time.unscaledTime >= nextSnapshotRequest)
@@ -81,8 +94,10 @@ internal static class VoiceDebuffs
         object? room = PhotonNetwork.CurrentRoom;
         if (!ReferenceEquals(room, previousRoom))
         {
+            AnimalVoicePlayback.StopAll();
             Effects.Clear();
             seenPulses.Clear();
+            seenAnimals.Clear();
             endedTokens.Clear();
             previousRoom = room;
             nextSnapshotRequest = 0;
@@ -93,7 +108,9 @@ internal static class VoiceDebuffs
     {
         if (!Effects.TryGetValue(target, out var effect)) return;
         Effects.Remove(target);
+        AnimalVoicePlayback.Stop(target);
         seenPulses.Remove(effect.Token);
+        seenAnimals.Remove(effect.Token);
         endedTokens.Add(effect.Token);
     }
 
@@ -104,6 +121,18 @@ internal static class VoiceDebuffs
         if (Effects.TryGetValue(target, out var previous) && previous.Token != effect.Token) seenPulses.Remove(previous.Token);
         Effects[target] = effect;
         seenPulses[effect.Token] = Math.Max(effect.Sequence, seenPulses.TryGetValue(effect.Token, out var previousSequence) ? previousSequence : 0);
+        seenAnimals[effect.Token] = Math.Max(effect.AnimalSequence, seenAnimals.TryGetValue(effect.Token, out var priorAnimal) ? priorAnimal : 0);
+    }
+
+    internal static void Animal(int target, string token, int sequence, int animal, double at)
+    {
+        if (!AnimalClips.Ready || animal < 0 || animal >= 4 || sequence <= 0 ||
+            !Effects.TryGetValue(target, out var effect) || effect.Token != token ||
+            (seenAnimals.TryGetValue(token, out var previous) && sequence <= previous)) return;
+        var player = GameAccess.FindPlayer(target);
+        if (!player || !effect.IsActive(Now, Round, GameAccess.IsAlive(player))) return;
+        seenAnimals[token] = sequence;
+        AnimalVoicePlayback.Play(target, token, animal, at);
     }
 
     internal static void Shock(int target, string token, int sequence, float strength, float seconds, float yaw, bool tumble)
@@ -138,5 +167,11 @@ internal static class VoiceDebuffs
 internal static class VoicePatch
 {
     [HarmonyPrefix]
-    private static void Prefix(PlayerVoiceChat __instance) => VoiceDebuffs.Apply(__instance);
+    private static void Prefix(PlayerVoiceChat __instance)
+    {
+        AnimalVoicePlayback.BeforeVoice(__instance);
+        VoiceDebuffs.Apply(__instance);
+    }
+    [HarmonyPostfix]
+    private static void Postfix(PlayerVoiceChat __instance) => AnimalVoicePlayback.AfterVoice(__instance);
 }

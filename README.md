@@ -4,7 +4,7 @@
 
 *Promotional illustration; in-game visuals use the procedural model described below.*
 
-**0.1.3 is an experimental test candidate, not a verified stable release.**
+**0.1.4 is an experimental test candidate, not a verified stable release.**
 The plugin compiles against the Managed references supplied for R.E.P.O. 0.5.1.
 Automated core and API metadata checks pass. The game has not been run in this environment.
 
@@ -17,14 +17,14 @@ Automated core and API metadata checks pass. The game has not been run in this e
 
 ## Install the local test build
 
-1. Download `releases/Industrial_Defibrillator-0.1.3.zip` from this repository.
+1. Download `releases/Industrial_Defibrillator-0.1.4.zip` from this repository.
 2. Create a separate Thunderstore Mod Manager profile and install the two dependencies above.
 3. Use **Settings > Import local mod** if available. Alternatively, open the profile folder and extract the ZIP's `BepInEx` directory into it.
 4. Remove/disable the previous mod installation before installing this update. Check that `Defibrillator.dll` and `Defibrillator.Core.dll` are together in `BepInEx/plugins/IndustrialDefibrillator/`.
 5. Launch through Thunderstore on every machine. Check `BepInEx/LogOutput.log` for the plugin load and item registration messages.
 6. Use a new test save and follow [the multiplayer checklist](docs/TESTING.md).
 
-This ZIP has **not** been published to Thunderstore. No game, BepInEx or REPOLib DLLs are bundled.
+This ZIP has **not** been published to Thunderstore. No game, BepInEx or REPOLib DLLs are bundled. Animal recordings are embedded in the project DLL, with source attributions included.
 
 ## Default behavior
 
@@ -41,6 +41,7 @@ This ZIP has **not** been published to Thunderstore. No game, BepInEx or REPOLib
 | Charging | Native `ItemBattery` charging and persistence |
 | Networking | Host checks identity, ownership, target, range, timing, damage and battery |
 | Revival aftereffects | 50/50 high (1.8x) or low (0.55x) voice for up to 180 seconds; electrical shock every 30 seconds, strong camera jolt and 25% native tumble chance |
+| Animal voice | Every 30 seconds, uniformly choose sheep, cat, dog or horse; substitute real voice briefly, maximum 3 seconds |
 | Assets | Original industrial model and synthesized sounds generated at runtime |
 
 The v0.1.0 registration failure (`Sequence contains no matching element`) is addressed by component-based donor discovery and deferred battery-display initialization. See the troubleshooting guide for new discovery messages. Retesting in the actual game is still required.
@@ -51,6 +52,8 @@ If a donor has no embedded battery display, a private non-rendering copy of a na
 The purchase limit is one new unit **per shop**, not one across the entire run.
 
 The voice effect ends at 180 seconds, death or level end, whichever comes first. Electrical aftershocks continue for the rest of the level until death, even after the voice has returned to normal. The first shock occurs 30 seconds after revival. Each shock shows the existing blue electrical arcs, increases native shake to strength 7 for 1.2 seconds, and briefly turns only the affected player's horizontal aim by 180 degrees in a random left/right direction. The host rolls a 25% chance to enter the native Q/tumble posture, visible to everyone. Players recover using normal game controls; already-tumbling players are not toggled upright. No direct HP damage or additional launch impulse is applied; normal native tumble interactions and environmental damage still apply. Native shake follows the game's shake settings; the separate turn can be disabled with `YawDegrees=0`.
+
+Animal clips are bundled user-supplied recordings from Pixabay; see [audio sources and integration](docs/AUDIO.md). Each emission chooses a new random animal with equal probability (repeats allowed). The animal is played at natural pitch and speed through a separate source, unaffected by the revived player's high/low voice. Speech animation accompanies playback, and microphone/TTS voice playback returns after the clip. The animal effect lasts until death or level end and has its own timer, independent of electrical shocks.
 
 ## Configuration
 
@@ -80,17 +83,22 @@ CameraShakeStrength = 7
 CameraShakeSeconds = 1.2
 YawDegrees = 180
 TumbleChance = 0.25
+
+[AnimalVoice]
+Enabled = true
+IntervalSeconds = 30
+Volume = 0.7
 ```
 
 On first upgrade to 0.1.2, legacy defaults `Price=0` and `CostPercent=25` migrate to `2` and `50`. Other custom values remain unchanged. The internal balance revision prevents repeated migrations; after migration, manual settings are respected. Keep your existing configuration file to retain voice and aftershock preferences.
 
-On first upgrade to 0.1.3, legacy shake defaults `3.5` / `0.8` migrate once to `7` / `1.2`; other custom shake values remain unchanged. `TumbleChance=0` disables folding and `1` makes it happen on every eligible shock. All players must update together: the impact event uses protocol version 2.
+On first upgrade to 0.1.3, legacy shake defaults `3.5` / `0.8` migrate once to `7` / `1.2`; other custom shake values remain unchanged. `TumbleChance=0` disables folding and `1` makes it happen on every eligible shock. All players must update together: the impact event in 0.1.3 uses protocol version 2. Version 0.1.4 adds animal events/snapshot state with protocol version 3: all players must install 0.1.4 together.
 
 Price uses displayed shop currency units (`2` means **2k**, not `2000`). Invalid values disable the plugin with an error log.
 
 ## Evidence and limitations
 
-- Passed: Release compilation without warnings/errors, 61 core behavior tests and 32 game API metadata checks.
+- Passed: Release compilation without warnings/errors, 69 core behavior tests and 44 API/embedded-resource checks.
 - Unrun: in-game startup, shop purchase, visuals, actual charging/persistence, voice playback, aftershock presentation, network execution, late joining, host migration and compatibility with other mods.
 - Automated core tests simulate the game adapter; they do not establish multiplayer stability.
 - Hold messages are sent every 0.15 seconds. A gap above 0.75 seconds resets progress; high latency can interrupt use. Aftereffect snapshots are requested every three seconds to recover late joins without restarting the voice timer.

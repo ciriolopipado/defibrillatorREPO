@@ -1,8 +1,8 @@
 {
   "name": "Industrial_Defibrillator",
-  "version_number": "0.1.3",
+  "version_number": "0.1.4",
   "website_url": "https://github.com/ciriolopipado/defibrillatorREPO",
-  "description": "Compact rechargeable defibrillator: revive at 1 HP with a comic voice, strong camera jolts and a chance of native tumble. 2k shop item, two revivals per charge. Experimental build.",
+  "description": "Compact 2k defibrillator with two revivals per charge, comic voices, camera jolts, tumble chance and random sheep/cat/dog/horse voice interruptions every 30 seconds. Experimental.",
   "dependencies": [
     "BepInEx-BepInExPack-5.4.2305",
     "Zehs-REPOLib-4.3.0"

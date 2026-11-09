@@ -1,12 +1,12 @@
-# Validation record — 0.1.3
+# Validation record — 0.1.4
 
 ## Completed locally
 
 - SDK: .NET 8.0.427, Linux x64.
 - Target framework: netstandard2.1 for plugin/core; net8.0 for test runners.
 - Plugin: Release compilation against user-supplied Managed assemblies, zero warnings and zero errors.
-- Core behavior runner: **61 executed, 61 passed, 0 failed**.
-- Game API metadata runner: **32 executed, 32 passed, 0 failed**.
+- Core behavior runner: **69 executed, 69 passed, 0 failed**.
+- API/resource runner: **44 executed, 44 passed, 0 failed** (40 native API checks and four embedded WAV equality checks).
 - Tests include one-HP revival, two default battery uses and configurable capacity, one-time balance migration, compact collision envelope, cancellation, concurrency, repeated death identities, voice expiry, lifetime boundaries, shock intervals and no catch-up bursts.
 - API checks validate every Harmony target's method arity, required private fields, native pitch/camera methods and the reflective shop method's ref-int parameter.
 - Game-reference fingerprints are recorded separately; no reference DLLs are distributed.
@@ -31,9 +31,15 @@ The user reported that the preceding build worked well overall and its shock vis
 The game source identifies Q as tumble, not literal character scaling. The new host policy uses a 25% default probability and synchronizes the native posture with `TumbleSet(true, false)`. Camera yaw is owner-local via `AdditiveAimX`, with no input lock. Tests check probability boundaries, bounded turn totals at variable frame rates, and migration of weak defaults. Metadata checks cover both native APIs and the target avatar fields.
 Visual presentation, native recovery, indirect environmental interactions and camera response must still be observed in multiplayer.
 
+## Animal audio — 0.1.4
+
+The user supplied four MP3s and Pixabay source links. Processed clips are mono PCM16 at 44100 Hz, with leading silence trimmed, normalization target -18 LUFS / -2 dBTP, short fades and a hard three-second cap. Actual lengths: dog 1.000 s, sheep 1.543 s, horse 2.492 s, cat 3.000 s.
+Core checks decoded all four recordings as non-silent/non-clipped and reject invalid/truncated/overlength WAVs. The API/resource runner compared each embedded WAV against its validated source bytes. The animal source uses pitch 1, Doppler 0 and neutral voice routing; confirming natural timbre and restoration still requires real game playback.
+Source attributions and the blocked online license-check result are in `docs/AUDIO.md` and the source manifest. Original user MP3s are not redistributed.
+
 ## Not established
 
-No R.E.P.O. executable was run in this development environment, and v0.1.3 has not been retested by the user yet. Automated tests do not establish actual RPC delivery, microphone/audio behavior, camera presentation, shader appearance, save compatibility, shop interaction or charger behavior.
+No R.E.P.O. executable was run in this development environment, and v0.1.4 has not been retested by the user yet. Automated tests do not establish actual RPC delivery, microphone/audio behavior, camera presentation, shader appearance, save compatibility, shop interaction or charger behavior.
 The complete supplied mod profile, late joining, host migration and actual multiplayer revival remain untested.
 An optional core CI workflow template is included under `docs/ci`; it is not active CI. No remote CI run has been observed.
 - The complete source, original icon and test ZIP were uploaded to `feature/defibrillator-source`. Direct pushes to `main` were rejected with `fatal error in commit_refs_rules`; the server supplied no root cause.

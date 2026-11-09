@@ -30,7 +30,9 @@ var methods = new (string Type, string Method, int Arguments)[]
     ("CameraShake", "Shake", 3),
     ("PhysGrabObject", "Awake", 0),
     ("CameraAim", "AdditiveAimX", 1),
-    ("PlayerTumble", "TumbleSet", 3)
+    ("PlayerTumble", "TumbleSet", 3),
+    ("PlayerVoiceChat", "OverrideVolumeMute", 1),
+    ("PlayerVoiceChat", "IsTalkingRPC", 2)
 };
 foreach (var required in methods)
 {
@@ -43,7 +45,10 @@ foreach (var required in methods)
 var fields = new (string Type, string Field)[]
 {
     ("PlayerAvatar", "isDisabled"), ("PlayerAvatar", "deadSet"),
-    ("PlayerAvatar", "tumble"), ("PlayerAvatar", "isTumbling"),
+    ("PlayerAvatar", "tumble"), ("PlayerAvatar", "isTumbling"), ("PlayerAvatar", "voiceChat"),
+    ("PlayerVoiceChat", "isTalking"), ("PlayerVoiceChat", "clipLoudness"),
+    ("PlayerVoiceChat", "isTalkingStartTime"), ("PlayerVoiceChat", "voiceGain"),
+    ("PlayerVoiceChat", "mixerMicrophoneSound"),
     ("PlayerAvatar", "playerDeathHead"), ("PlayerAvatar", "clientCameraPosition"),
     ("PlayerAvatar", "clientCameraRotation"), ("PlayerHealth", "health"),
     ("ItemAttributes", "shopItem"), ("ItemAttributes", "value"),
@@ -82,7 +87,22 @@ Require(setterSignature.ReadCompressedInteger() == 1 && setterSignature.ReadSign
     setterSignature.ReadSignatureTypeCode() == SignatureTypeCode.SZArray &&
     setterSignature.ReadSignatureTypeCode() == SignatureTypeCode.Object,
     "Photon saved-scale payload setter accepts one object array");
-Console.WriteLine($"Executed {checks} game API metadata checks: all passed. No in-game behavior was executed.");
+using var pluginStream = File.OpenRead("src/Defibrillator.Plugin/bin/Release/netstandard2.1/Defibrillator.dll");
+using var pluginPe = new PEReader(pluginStream);
+var pluginReader = pluginPe.GetMetadataReader();
+var resources = pluginReader.ManifestResources.Select(pluginReader.GetManifestResource).ToArray();
+if (resources.Length != 4) throw new InvalidOperationException("Expected exactly four embedded animal recordings.");
+var resourceBlock = pluginPe.GetSectionData(pluginPe.PEHeaders.CorHeader!.ResourcesDirectory.RelativeVirtualAddress);
+foreach (string animal in new[] { "sheep", "cat", "dog", "horse" })
+{
+    var resource = resources.Single(entry => pluginReader.GetString(entry.Name) == "Defibrillator.Animals." + animal + ".wav");
+    var sizeReader = resourceBlock.GetReader((int)resource.Offset, 4);
+    int length = sizeReader.ReadInt32();
+    var embedded = resourceBlock.GetContent((int)resource.Offset + 4, length).ToArray();
+    Require(embedded.SequenceEqual(File.ReadAllBytes("assets/audio/" + animal + ".wav")),
+        "Embedded " + animal + " matches validated source WAV");
+}
+Console.WriteLine($"Executed {checks} API/embedded-resource checks: all passed. No in-game behavior was executed.");
 return 0;
 
 TypeDefinition FindType(string name) => reader.GetTypeDefinition(reader.TypeDefinitions.Single(handle =>

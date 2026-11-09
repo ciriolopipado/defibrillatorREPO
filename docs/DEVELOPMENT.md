@@ -49,7 +49,9 @@ The package icon can be resized from the preserved cover using `bash scripts/cre
 - `AftershockVisual`: existing local native shake and original electrical arcs.
 - `AftershockCamera`: owner-only incremental native additive yaw; stops on death, menus or level exit, and does not lock input.
 - `AftershockImpact`: bounded yaw curve, probability boundaries and once-only weak-shake migration.
-- Native Q posture is applied once by the host through `PlayerTumble.TumbleSet(true, false)`, avoiding the voluntary launch upgrade. Impact packets use protocol 2 and carry the host-selected signed angle and boolean decision.
+- Native Q posture is applied once by the host through `PlayerTumble.TumbleSet(true, false)`, avoiding the voluntary launch upgrade. Impact packets in 0.1.3 use protocol 2; 0.1.4 uses protocol 3 for the added animal events/snapshots. Impact packets carry the host-selected signed angle and boolean decision.
+- `AnimalClips` / `PcmWave`: strict decoding of four embedded, normalized PCM clips, each at most three seconds.
+- `AnimalVoicePlayback`: neutral positional playback, temporary native volume suppression, and reversible speech-state overlays around native updates and speech RPCs. Microphone capture settings are never changed.
 - `OriginalAssets`: original visuals and audio synthesis.
 
 Client requests cannot set charge, health, position, elapsed time or range. The host observes those independently.
@@ -68,3 +70,7 @@ Use the same mod set across clients because REPOLib assigns custom event codes b
 5. Commit and push English source, documentation and the test ZIP. Exclude third-party binaries and user archives.
 
 Only mark a release stable after in-game acceptance testing passes.
+
+## Third-party audio assets
+
+Builds embed `assets/audio/*.wav` directly in the plugin. The package includes source attribution but no standalone WAV/MP3 files. See `docs/AUDIO.md` and `assets/audio/SOURCES.json`; their source terms remain separate from project code/art. Core tests need the four checked-in WAV build assets, but no game references.

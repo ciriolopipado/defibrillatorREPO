@@ -11,7 +11,7 @@ namespace Defibrillator.Mod;
 public sealed class Plugin : BaseUnityPlugin
 {
     public const string Id = "ciriolopipado.defibrillator";
-    public const string Version = "0.1.3";
+    public const string Version = "0.1.4";
     internal static Plugin Instance = null!;
     internal Settings Settings = null!;
     internal NetworkBridge Network = null!;
@@ -70,6 +70,13 @@ public sealed class Plugin : BaseUnityPlugin
             VoiceDebuffs.TumbleChance = Config.Bind("Aftershock", "TumbleChance", 0.25d, "Probability of native Q/tumble per shock, 0–1; 0 disables, 1 always triggers.").Value;
             _ = AftershockImpact.YawAt(VoiceDebuffs.YawDegrees, 0);
             _ = AftershockImpact.RollTumble(0, VoiceDebuffs.TumbleChance);
+            VoiceDebuffs.AnimalEnabled = Config.Bind("AnimalVoice", "Enabled", true, "Host setting: emit a random animal sound automatically after revival.").Value;
+            VoiceDebuffs.AnimalInterval = Config.Bind("AnimalVoice", "IntervalSeconds", 30d, "Host setting: animal interval, 5–300 seconds; independent of electrical shocks.").Value;
+            VoiceDebuffs.AnimalVolume = Config.Bind("AnimalVoice", "Volume", 0.7f, "Local playback volume, 0–1. Per-player voice gain and the voice mixer also apply.").Value;
+            if (double.IsNaN(VoiceDebuffs.AnimalInterval) || double.IsInfinity(VoiceDebuffs.AnimalInterval) ||
+                VoiceDebuffs.AnimalInterval < 5 || VoiceDebuffs.AnimalInterval > 300 ||
+                float.IsNaN(VoiceDebuffs.AnimalVolume) || VoiceDebuffs.AnimalVolume < 0 || VoiceDebuffs.AnimalVolume > 1)
+                throw new ArgumentException("Invalid animal voice settings.");
             _ = VoiceEffect.ChoosePitch(0, VoiceDebuffs.HighPitch, VoiceDebuffs.LowPitch);
             if (double.IsNaN(VoiceDebuffs.Seconds) || double.IsInfinity(VoiceDebuffs.Seconds) ||
                 VoiceDebuffs.Seconds < 1 || VoiceDebuffs.Seconds > 3600 ||
@@ -78,6 +85,7 @@ public sealed class Plugin : BaseUnityPlugin
                 float.IsNaN(VoiceDebuffs.ShakeStrength) || VoiceDebuffs.ShakeStrength < 0 || VoiceDebuffs.ShakeStrength > 10 ||
                 float.IsNaN(VoiceDebuffs.ShakeSeconds) || VoiceDebuffs.ShakeSeconds < 0.1f || VoiceDebuffs.ShakeSeconds > 2)
                 throw new ArgumentException("Invalid voice debuff duration settings.");
+            AnimalClips.Load();
             Network = new NetworkBridge();
             harmony = new Harmony(Id);
             harmony.PatchAll(typeof(Plugin).Assembly);
@@ -126,6 +134,7 @@ public sealed class Plugin : BaseUnityPlugin
     private void OnDestroy()
     {
         failed = true;
+        AnimalVoicePlayback.StopAll();
         Service?.CancelAll();
         Service = null;
         harmony?.UnpatchSelf();

@@ -12,6 +12,7 @@ internal static class GameAccess
     private static readonly FieldInfo DeadSet = Require(typeof(PlayerAvatar), "deadSet");
     private static readonly FieldInfo TumbleField = Require(typeof(PlayerAvatar), "tumble");
     private static readonly FieldInfo Tumbling = Require(typeof(PlayerAvatar), "isTumbling");
+    private static readonly FieldInfo VoiceField = Require(typeof(PlayerAvatar), "voiceChat");
     private static readonly FieldInfo DeathHead = Require(typeof(PlayerAvatar), "playerDeathHead");
     private static readonly FieldInfo Health = Require(typeof(PlayerHealth), "health");
     private static readonly FieldInfo ShopItem = Require(typeof(ItemAttributes), "shopItem");
@@ -29,6 +30,7 @@ internal static class GameAccess
 
     internal static bool IsDead(PlayerAvatar avatar) => (bool)Disabled.GetValue(avatar);
     internal static PlayerTumble? Tumble(PlayerAvatar avatar) => (PlayerTumble?)TumbleField.GetValue(avatar);
+    internal static PlayerVoiceChat? Voice(PlayerAvatar avatar) => (PlayerVoiceChat?)VoiceField.GetValue(avatar);
     internal static bool IsTumbling(PlayerAvatar avatar) => (bool)Tumbling.GetValue(avatar);
     internal static bool IsAlive(PlayerAvatar avatar) => !IsDead(avatar) && !(bool)DeadSet.GetValue(avatar);
     internal static PlayerDeathHead? Head(PlayerAvatar avatar) => (PlayerDeathHead?)DeathHead.GetValue(avatar);

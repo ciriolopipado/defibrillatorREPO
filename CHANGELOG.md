@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.1.4 — 2026-11-09
+
+### Added
+
+- Four user-supplied animal recordings: sheep, cat, dog and horse, with Pixabay source links and processing fingerprints.
+- Automatic host-selected animal voice every 30 seconds after revival, independently scheduled from electrical shocks. All four have equal probability; repeats are allowed.
+- Temporary native microphone/TTS playback suppression and amplitude-driven speech animation while the animal plays, without changing microphone capture/transmission settings.
+- Separate neutral-pitch audio source (pitch 1, no Doppler) so assigned high/low player voices do not modify animal timbre or speed.
+- Strict PCM16 decoding, maximum three-second clips, embedded resources, duplicate-event protection and host-clock playback offsets.
+- Animal enable/interval and local volume configuration, plus protocol version 3 snapshots carrying the independent animal schedule.
+
+### Validation
+
+- 69 core tests passed, including all four WAVs, hard duration/format rejection and independent timer/death/snapshot regressions.
+- 40 native API metadata and four embedded-audio equality checks passed; Release build has zero warnings/errors.
+- Direct Pixabay page/license access was blocked by the environment proxy. User-supplied source URLs and attribution are documented; no fresh online license verification is claimed.
+- Multiplayer audio, voice restoration, neutral pitch and speech animation still require an in-game test.
+
 ## 0.1.3 — 2026-11-07
 
 ### Changed

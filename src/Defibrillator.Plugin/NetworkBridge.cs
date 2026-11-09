@@ -10,7 +10,7 @@ namespace Defibrillator.Mod;
 
 internal sealed class NetworkBridge
 {
-    private const string Protocol = Plugin.Id + "/2";
+    private const string Protocol = Plugin.Id + "/3";
     private readonly NetworkedEvent channel;
     internal NetworkBridge() => channel = new NetworkedEvent(Protocol, Receive);
 
@@ -38,13 +38,24 @@ internal sealed class NetworkBridge
         {
             if (operation == 3)
             {
-                if (data.Length != 10 || PhotonNetwork.MasterClient == null ||
+                if (data.Length != 13 || PhotonNetwork.MasterClient == null ||
                     packet.Sender != PhotonNetwork.MasterClient.ActorNumber ||
                     data[2] is not int target || target <= 0 || data[3] is not float pitch ||
                     data[4] is not double expires || data[5] is not double nextShock ||
                     data[6] is not double interval || data[7] is not string round || round.Length > 256 ||
-                    data[8] is not string token || token.Length > 64 || data[9] is not int sequence) return;
-                VoiceDebuffs.Receive(target, new VoiceEffect(pitch, expires, nextShock, interval, round, token, sequence));
+                    data[8] is not string token || token.Length > 64 || data[9] is not int sequence ||
+                    data[10] is not double nextAnimal || data[11] is not double animalInterval || data[12] is not int animalSequence) return;
+                VoiceDebuffs.Receive(target, new VoiceEffect(pitch, expires, nextShock, interval, round, token, sequence,
+                    nextAnimal, animalInterval, animalSequence));
+                return;
+            }
+            if (operation == 6)
+            {
+                if (data.Length != 7 || PhotonNetwork.MasterClient == null || packet.Sender != PhotonNetwork.MasterClient.ActorNumber ||
+                    data[2] is not int target || target <= 0 || data[3] is not string token || token.Length > 64 ||
+                    data[4] is not int sequence || sequence <= 0 || data[5] is not int animal || animal < 0 || animal >= 4 ||
+                    data[6] is not double at || double.IsNaN(at) || double.IsInfinity(at)) return;
+                VoiceDebuffs.Animal(target, token, sequence, animal, at);
                 return;
             }
             if (operation == 5)
@@ -116,7 +127,8 @@ internal sealed class NetworkBridge
     {
         if (!SemiFunc.IsMultiplayer()) return;
         channel.RaiseEvent(new object[] { Protocol, 3, target, effect.Pitch, effect.VoiceExpiresAt,
-            effect.NextShockAt, effect.ShockInterval, effect.Round, effect.Token, effect.Sequence },
+            effect.NextShockAt, effect.ShockInterval, effect.Round, effect.Token, effect.Sequence,
+            effect.NextAnimalAt, effect.AnimalInterval, effect.AnimalSequence },
             options ?? NetworkingEvents.RaiseOthers, SendOptions.SendReliable);
     }
 
@@ -127,5 +139,11 @@ internal sealed class NetworkBridge
     {
         if (SemiFunc.IsMultiplayer()) channel.RaiseEvent(new object[] { Protocol, 5, target, token,
             sequence, strength, seconds, yaw, tumble }, NetworkingEvents.RaiseOthers, SendOptions.SendReliable);
+    }
+
+    internal void SendAnimal(int target, string token, int sequence, int animal, double at)
+    {
+        if (SemiFunc.IsMultiplayer()) channel.RaiseEvent(new object[] { Protocol, 6, target, token,
+            sequence, animal, at }, NetworkingEvents.RaiseOthers, SendOptions.SendReliable);
     }
 }

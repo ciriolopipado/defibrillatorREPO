@@ -1,0 +1,47 @@
+{
+  "provenance": "Files uploaded by the user with Pixabay source URLs. No original MP3s are redistributed.",
+  "license": "Pixabay Content License; see https://pixabay.com/service/license-summary/ and audio attribution documentation. No CC0 claim.",
+  "online_verification": "Direct website/license retrieval was blocked by the environment proxy (HTTP 403).",
+  "clips": [
+    {
+      "animal": "dog",
+      "author": "Dragon Studio",
+      "source_url": "https://pixabay.com/es/sound-effects/naturaleza-free-dog-bark-419014/",
+      "original_filename": "dragon-studio-free-dog-bark-419014.mp3",
+      "original_sha256": "e891f4f71cc2fbad6b506375f38a1559efc1dac4f8c5b7a264ba4e1f073a6498",
+      "processed_sha256": "ef2eddb0234af56a247ddddf6198e8a2428572ebd743e5f330af0db2f0b40dcc",
+      "seconds": 0.9996371882086168,
+      "processing": "Leading-silence trim, maximum 3 seconds, loudness normalization target -18 LUFS / -2 dBTP, short fades, mono PCM16 at 44100 Hz"
+    },
+    {
+      "animal": "sheep",
+      "author": "Universfield",
+      "source_url": "https://pixabay.com/es/sound-effects/naturaleza-sheep-bleat-122256/",
+      "original_filename": "universfield-sheep-bleat-122256.mp3",
+      "original_sha256": "3b6efbb1fa6e2f619713361a8807a4c4e6e50179961b725de8d5d77474355f12",
+      "processed_sha256": "aaeaebbf66dc8f0ec7f7525f11c7b1b1a277aafb64aed5250f91ad374e0db340",
+      "seconds": 1.5426530612244898,
+      "processing": "Leading-silence trim, maximum 3 seconds, loudness normalization target -18 LUFS / -2 dBTP, short fades, mono PCM16 at 44100 Hz"
+    },
+    {
+      "animal": "horse",
+      "author": "Dragon Studio",
+      "source_url": "https://pixabay.com/es/sound-effects/naturaleza-horse-neigh-515279/",
+      "original_filename": "dragon-studio-horse-neigh-515279.mp3",
+      "original_sha256": "92a5e82eb23cdea9c2b24c6e42d1618339e817374d85975a86fd1afad814dadb",
+      "processed_sha256": "d599abcedd89df446f89d9ae8893364ca8ff3231adcb1eda197d44ecc6705e92",
+      "seconds": 2.491768707482993,
+      "processing": "Leading-silence trim, maximum 3 seconds, loudness normalization target -18 LUFS / -2 dBTP, short fades, mono PCM16 at 44100 Hz"
+    },
+    {
+      "animal": "cat",
+      "author": "magiaz",
+      "source_url": "https://pixabay.com/es/sound-effects/naturaleza-gato-462790/",
+      "original_filename": "magiaz-gato-462790.mp3",
+      "original_sha256": "7b572f2083353ac878e47665c74dfb0cfd35845777128c5f63bf1f065bc764a3",
+      "processed_sha256": "04da8cf5700072300d7cbf4fa10c0a99143a0846149e29af71351597feab7844",
+      "seconds": 3.0,
+      "processing": "Leading-silence trim, maximum 3 seconds, loudness normalization target -18 LUFS / -2 dBTP, short fades, mono PCM16 at 44100 Hz"
+    }
+  ]
+}

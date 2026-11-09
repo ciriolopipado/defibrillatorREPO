@@ -19,6 +19,8 @@ files = {
     "docs/DEVELOPMENT.md": ROOT / "docs/DEVELOPMENT.md",
     "docs/MOD_PROFILE.md": ROOT / "docs/MOD_PROFILE.md",
     "docs/VALIDATION.md": ROOT / "docs/VALIDATION.md",
+    "docs/AUDIO.md": ROOT / "docs/AUDIO.md",
+    "docs/AUDIO_SOURCES.json": ROOT / "assets/audio/SOURCES.json",
     "BepInEx/plugins/IndustrialDefibrillator/Defibrillator.dll": ROOT / "src/Defibrillator.Plugin/bin/Release/netstandard2.1/Defibrillator.dll",
     "BepInEx/plugins/IndustrialDefibrillator/Defibrillator.Core.dll": ROOT / "src/Defibrillator.Plugin/bin/Release/netstandard2.1/Defibrillator.Core.dll",
 }

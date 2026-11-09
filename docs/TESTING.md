@@ -2,12 +2,12 @@
 
 ## Evidence
 
-Release compilation, 61 core behavior tests and 32 API metadata checks passed in the development environment.
-All game scenarios below are **unrun for v0.1.3**. The user tested v0.1.0 and reported a confirmed registration failure in donor discovery; shop availability did not pass then. Subsequent tests reported that the object appeared but was oversized, with unrealistic weight and hitboxes. The user subsequently reported that the build worked well overall and the shock visuals looked good, but its impact felt weak. This is qualitative feedback, not a completed acceptance matrix. Reference DLLs do not provide a playable game installation.
+Release compilation, 69 core behavior tests and 44 API/embedded-resource checks passed in the development environment.
+All game scenarios below are **unrun for v0.1.4**. The user tested v0.1.0 and reported a confirmed registration failure in donor discovery; shop availability did not pass then. Subsequent tests reported that the object appeared but was oversized, with unrealistic weight and hitboxes. The user subsequently reported that the build worked well overall and the shock visuals looked good, but its impact felt weak. This is qualitative feedback, not a completed acceptance matrix. Reference DLLs do not provide a playable game installation.
 
 ## Preparation
 
-Use two players on R.E.P.O. 0.5.1 with the same v0.1.3 test ZIP (remove the old installation first), BepInExPack 5.4.2305 and REPOLib 4.3.0.
+Use two players on R.E.P.O. 0.5.1 with the same v0.1.4 test ZIP (remove the old installation first), BepInExPack 5.4.2305 and REPOLib 4.3.0.
 Create a separate profile and a new save. First test without optional mods.
 Preserve `BepInEx/LogOutput.log` from both machines after the session.
 
@@ -47,6 +47,14 @@ Preserve `BepInEx/LogOutput.log` from both machines after the session.
 | D04 | Observe D03 as another player | Electrical arcs visible on target; observer's camera unaffected | Unrun |
 | D05 | Die again or end the level during either effect | Both effects stop; a later revival rolls a new pitch | Unrun |
 | D06 | Late join while voice effect is active | Same pitch within the next snapshot; original expiry preserved, no replay of past shocks | Unrun |
+| A01 | Remain alive after revival without pressing push-to-talk | First animal at 30 seconds; each new interval picks one of four, repeats allowed | Unrun |
+| A02 | Speak via microphone/TTS during the animal | Only animal heard during the clip; real voice resumes immediately afterwards; no stuck mute | Unrun |
+| A03 | Inspect speech animation with microphone disabled | Target visibly appears to speak according to the animal waveform | Unrun |
+| A04 | Compare the same animal with high/low assigned player voice | Same natural animal pitch/speed and duration; source pitch stays 1, no Doppler | Unrun |
+| A05 | Listen as host/client from different distances and with player-volume changes | Same animal chosen, positional playback and voice gain respected | Unrun |
+| A06 | Die, leave level or disconnect mid-clip; late join afterwards | Playback/overrides clear, no old clip replay; next deadline preserved | Unrun |
+| A07 | Set electrical interval to 10 seconds; leave animal interval at 30 | Animal remains every 30 seconds, not every shock | Unrun |
+| A08 | Survive beyond comic pitch expiry | Voice pitch returns to normal; scheduled animal interruptions continue until death/level end | Unrun |
 | N01 | Operator disconnects mid-attempt | No delayed revival; another operator can start | Unrun |
 | N02 | Host changes if the game supports continuation | Progress resets; charge preserved; no duplicate revival | Unrun |
 | C01 | Change host settings and restart | Host price/duration/range/health/cost govern results | Unrun |
