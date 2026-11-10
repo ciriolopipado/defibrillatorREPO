@@ -8,7 +8,7 @@ public sealed class VoiceEffect
     public float Pitch { get; }
     public double VoiceExpiresAt { get; }
     public double NextShockAt { get; private set; }
-    public double ShockInterval { get; }
+    public double ShockInterval { get; private set; }
     public int Sequence { get; private set; }
     public double NextAnimalAt { get; private set; }
     public double AnimalInterval { get; }
@@ -46,10 +46,13 @@ public sealed class VoiceEffect
     public bool HasVoice(double now, string round, bool playerAlive) => IsActive(now, round, playerAlive) && now < VoiceExpiresAt;
 
     /// <summary>Host only. Missed ticks produce one pulse, never a catch-up burst.</summary>
-    public bool TryShock(double now, string round, bool playerAlive)
+    public bool TryShock(double now, string round, bool playerAlive, double? nextIntervalSeconds = null)
     {
         if (!IsActive(now, round, playerAlive) || now < NextShockAt) return false;
-        NextShockAt = now + ShockInterval;
+        double interval = nextIntervalSeconds ?? ShockInterval;
+        if (!Settings.Finite(interval) || interval < 5 || interval > 300) throw new ArgumentOutOfRangeException(nameof(nextIntervalSeconds));
+        NextShockAt = now + interval;
+        ShockInterval = interval;
         Sequence = checked(Sequence + 1);
         return true;
     }

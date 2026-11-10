@@ -4,6 +4,54 @@ using Defibrillator.Core;
 
 var tests = new (string Name, Action Run)[]
 {
+    ("Random shock delay includes the requested 45 and 60 second boundaries", () =>
+    {
+        Equal(45d, ShockSchedule.Choose(45, 60, 0)); Equal(60d, ShockSchedule.Choose(45, 60, 1));
+        Equal(52.5d, ShockSchedule.Choose(45, 60, 0.5));
+    }),
+    ("Invalid shock ranges and random samples are rejected", () =>
+    {
+        Throws<ArgumentOutOfRangeException>(() => ShockSchedule.Choose(60, 45, 0));
+        Throws<ArgumentOutOfRangeException>(() => ShockSchedule.Choose(45, double.NaN, 0));
+        Throws<ArgumentOutOfRangeException>(() => ShockSchedule.Choose(45, 60, 1.1));
+    }),
+    ("Equal shock limits support a fixed custom delay", () =>
+    {
+        Equal(50d, ShockSchedule.Choose(50, 50, 0.8));
+    }),
+    ("Every shock can schedule a new delay without moving the animal deadline", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 45, 45, "round", "token", nextAnimalAt: 30);
+        Equal(false, effect.TryShock(44.99, "round", true, 60));
+        Equal(true, effect.TryAnimal(30, "round", true)); Equal(60d, effect.NextAnimalAt);
+        Equal(true, effect.TryShock(45, "round", true, 60)); Equal(105d, effect.NextShockAt);
+        Equal(60d, effect.NextAnimalAt);
+        Equal(true, effect.TryAnimal(60, "round", true)); Equal(90d, effect.NextAnimalAt);
+        Equal(true, effect.TryShock(105, "round", true, 45)); Equal(150d, effect.NextShockAt);
+        Equal(90d, effect.NextAnimalAt);
+    }),
+    ("Random shock schedule survives snapshot restoration independently of animal cadence", () =>
+    {
+        var original = new VoiceEffect(1.8f, 180, 50, 50, "round", "token", nextAnimalAt: 30);
+        original.TryShock(50, "round", true, 57);
+        var copy = new VoiceEffect(original.Pitch, original.VoiceExpiresAt, original.NextShockAt, original.ShockInterval,
+            original.Round, original.Token, original.Sequence, original.NextAnimalAt, original.AnimalInterval, original.AnimalSequence);
+        Equal(107d, copy.NextShockAt); Equal(57d, copy.ShockInterval); Equal(30d, copy.NextAnimalAt);
+        Equal(false, copy.TryShock(106.99, "round", true, 45));
+        Equal(true, copy.TryShock(107, "round", true, 45)); Equal(152d, copy.NextShockAt);
+    }),
+    ("A delayed random shock schedules from now without a burst", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 45, 45, "round", "token");
+        Equal(true, effect.TryShock(200, "round", true, 60)); Equal(260d, effect.NextShockAt);
+        Equal(false, effect.TryShock(200, "round", true, 45)); Equal(1, effect.Sequence);
+    }),
+    ("Invalid next shock delay cannot corrupt a running schedule", () =>
+    {
+        var effect = new VoiceEffect(1.8f, 180, 45, 45, "round", "token");
+        Throws<ArgumentOutOfRangeException>(() => effect.TryShock(45, "round", true, double.NaN));
+        Equal(45d, effect.NextShockAt); Equal(0, effect.Sequence);
+    }),
     ("All four bundled animal recordings are valid non-silent PCM clips at most three seconds", () =>
     {
         foreach (string name in new[] { "sheep", "cat", "dog", "horse" })

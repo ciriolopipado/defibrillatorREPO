@@ -1,13 +1,13 @@
-# Validation record — 0.1.5
+# Validation record — 0.1.6
 
-Version 0.1.5 is a version-only rebuild of 0.1.4; gameplay, protocol and audio assets are unchanged. Core test results below were established for the unchanged logic in 0.1.4. The 0.1.5 Release build and packaged metadata/resources are checked again.
+Version 0.1.6 changes shock scheduling; the current logic and API/resource checks were executed locally for this version.
 
 ## Completed locally
 
 - SDK: .NET 8.0.427, Linux x64.
 - Target framework: netstandard2.1 for plugin/core; net8.0 for test runners.
 - Plugin: Release compilation against user-supplied Managed assemblies, zero warnings and zero errors.
-- Core behavior runner: **69 executed, 69 passed, 0 failed**.
+- Core behavior runner: **76 executed, 76 passed, 0 failed**.
 - API/resource runner: **44 executed, 44 passed, 0 failed** (40 native API checks and four embedded WAV equality checks).
 - Tests include one-HP revival, two default battery uses and configurable capacity, one-time balance migration, compact collision envelope, cancellation, concurrency, repeated death identities, voice expiry, lifetime boundaries, shock intervals and no catch-up bursts.
 - API checks validate every Harmony target's method arity, required private fields, native pitch/camera methods and the reflective shop method's ref-int parameter.
@@ -39,9 +39,14 @@ The user supplied four MP3s and Pixabay source links. Processed clips are mono P
 Core checks decoded all four recordings as non-silent/non-clipped and reject invalid/truncated/overlength WAVs. The API/resource runner compared each embedded WAV against its validated source bytes. The animal source uses pitch 1, Doppler 0 and neutral voice routing; confirming natural timbre and restoration still requires real game playback.
 Source attributions and the blocked online license-check result are in `docs/AUDIO.md` and the source manifest. Original user MP3s are not redistributed.
 
+## Independent timing — 0.1.6
+
+The host samples a new 45–60 second delay for the initial shock and each subsequent shock. Only due shocks draw a new interval. The selected next deadline and interval are retained in existing snapshot fields. The separate animal deadline is not changed by a shock.
+Seven added regressions verify endpoints, invalid ranges, fixed-range override, independent animal cadence, restored deadlines, missed-tick behavior and invalid-delay atomicity. Existing media files and protocol 3 packet shapes are unchanged.
+
 ## Not established
 
-No R.E.P.O. executable was run in this development environment, and v0.1.5 has not been retested by the user yet. Automated tests do not establish actual RPC delivery, microphone/audio behavior, camera presentation, shader appearance, save compatibility, shop interaction or charger behavior.
+No R.E.P.O. executable was run in this development environment, and v0.1.6 has not been retested by the user yet. Automated tests do not establish actual RPC delivery, microphone/audio behavior, camera presentation, shader appearance, save compatibility, shop interaction or charger behavior.
 The complete supplied mod profile, late joining, host migration and actual multiplayer revival remain untested.
 An optional core CI workflow template is included under `docs/ci`; it is not active CI. No remote CI run has been observed.
 - The complete source, original icon and test ZIP were uploaded to `feature/defibrillator-source`. Direct pushes to `main` were rejected with `fatal error in commit_refs_rules`; the server supplied no root cause.

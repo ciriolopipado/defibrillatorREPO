@@ -11,7 +11,7 @@ namespace Defibrillator.Mod;
 public sealed class Plugin : BaseUnityPlugin
 {
     public const string Id = "ciriolopipado.defibrillator";
-    public const string Version = "0.1.5";
+    public const string Version = "0.1.6";
     internal static Plugin Instance = null!;
     internal Settings Settings = null!;
     internal NetworkBridge Network = null!;
@@ -52,7 +52,11 @@ public sealed class Plugin : BaseUnityPlugin
             VoiceDebuffs.Seconds = Config.Bind("VoiceDebuff", "Seconds", 180d, "Maximum duration, 1–3600 seconds; also ends at death or level end.").Value;
             VoiceDebuffs.HighPitch = Config.Bind("VoiceDebuff", "HighPitch", 1.8f, "Comically high voice multiplier, above 1 and up to 2.").Value;
             VoiceDebuffs.LowPitch = Config.Bind("VoiceDebuff", "LowPitch", 0.55f, "Comically low voice multiplier, at least 0.5 and below 1.").Value;
-            VoiceDebuffs.ShockInterval = Config.Bind("Aftershock", "IntervalSeconds", 30d, "Harmless shock interval, 5–300 seconds; ends at death or level end.").Value;
+            VoiceDebuffs.ShockMinimum = Config.Bind("Aftershock", "MinIntervalSeconds", 45d, "Host setting: minimum randomly selected electrical-shock delay, at least 5 seconds.").Value;
+            VoiceDebuffs.ShockMaximum = Config.Bind("Aftershock", "MaxIntervalSeconds", 60d, "Host setting: maximum electrical-shock delay, up to 300 seconds and at least the minimum.").Value;
+            _ = ShockSchedule.Choose(VoiceDebuffs.ShockMinimum, VoiceDebuffs.ShockMaximum, 0);
+            Logger.LogInfo("Electrical shock interval range=" + VoiceDebuffs.ShockMinimum + "–" + VoiceDebuffs.ShockMaximum +
+                " seconds. Legacy Aftershock.IntervalSeconds is no longer used; animal timing is independent.");
             var shakeStrength = Config.Bind("Aftershock", "CameraShakeStrength", 7f, "Camera shake strength, 0–10; respects native camera-shake settings.");
             var shakeSeconds = Config.Bind("Aftershock", "CameraShakeSeconds", 1.2f, "Camera shake duration, 0.1–2 seconds.");
             var impactRevision = Config.Bind("Internal", "AftershockRevision", 0, "Once-only upgrade of old weak shake defaults.");
@@ -80,8 +84,6 @@ public sealed class Plugin : BaseUnityPlugin
             _ = VoiceEffect.ChoosePitch(0, VoiceDebuffs.HighPitch, VoiceDebuffs.LowPitch);
             if (double.IsNaN(VoiceDebuffs.Seconds) || double.IsInfinity(VoiceDebuffs.Seconds) ||
                 VoiceDebuffs.Seconds < 1 || VoiceDebuffs.Seconds > 3600 ||
-                double.IsNaN(VoiceDebuffs.ShockInterval) || double.IsInfinity(VoiceDebuffs.ShockInterval) ||
-                VoiceDebuffs.ShockInterval < 5 || VoiceDebuffs.ShockInterval > 300 ||
                 float.IsNaN(VoiceDebuffs.ShakeStrength) || VoiceDebuffs.ShakeStrength < 0 || VoiceDebuffs.ShakeStrength > 10 ||
                 float.IsNaN(VoiceDebuffs.ShakeSeconds) || VoiceDebuffs.ShakeSeconds < 0.1f || VoiceDebuffs.ShakeSeconds > 2)
                 throw new ArgumentException("Invalid voice debuff duration settings.");

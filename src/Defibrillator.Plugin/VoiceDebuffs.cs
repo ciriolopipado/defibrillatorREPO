@@ -20,7 +20,8 @@ internal static class VoiceDebuffs
     internal static double Seconds;
     internal static float HighPitch;
     internal static float LowPitch;
-    internal static double ShockInterval;
+    internal static double ShockMinimum;
+    internal static double ShockMaximum;
     internal static float ShakeStrength;
     internal static float ShakeSeconds;
     internal static float YawDegrees;
@@ -37,8 +38,9 @@ internal static class VoiceDebuffs
     {
         if (!SemiFunc.IsMasterClientOrSingleplayer()) return;
         EnsureRoom();
+        double firstShock = NextShockInterval();
         var effect = new VoiceEffect(VoiceEffect.ChoosePitch(UnityEngine.Random.Range(0, 2), HighPitch, LowPitch),
-            Now + Seconds, Now + ShockInterval, ShockInterval, Round, Guid.NewGuid().ToString("N"),
+            Now + Seconds, Now + firstShock, firstShock, Round, Guid.NewGuid().ToString("N"),
             nextAnimalAt: Now + AnimalInterval, animalInterval: AnimalInterval);
         Effects[target] = effect;
         seenPulses[effect.Token] = 0;
@@ -66,7 +68,8 @@ internal static class VoiceDebuffs
                 ClearPlayer(pair.Key);
                 continue;
             }
-            if (SemiFunc.IsMasterClientOrSingleplayer() && pair.Value.TryShock(Now, Round, true))
+            if (SemiFunc.IsMasterClientOrSingleplayer() && Now >= pair.Value.NextShockAt &&
+                pair.Value.TryShock(Now, Round, true, NextShockInterval()))
             {
                 float yaw = YawDegrees * (UnityEngine.Random.Range(0, 2) == 0 ? -1 : 1);
                 bool tumble = AftershockImpact.RollTumble(UnityEngine.Random.Range(0, 1000000) / 1000000d, TumbleChance);
@@ -88,6 +91,9 @@ internal static class VoiceDebuffs
             Plugin.Instance.Network.RequestVoiceSnapshot();
         }
     }
+
+    private static double NextShockInterval() => ShockSchedule.Choose(ShockMinimum, ShockMaximum,
+        UnityEngine.Random.Range(0, 1000001) / 1000000d);
 
     private static void EnsureRoom()
     {

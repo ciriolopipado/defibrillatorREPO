@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.6 — 2026-11-10
+
+### Changed
+
+- Electrical aftershocks now draw a new host-authoritative delay between 45 and 60 seconds for the first and every subsequent shock.
+- Replaced the old `[Aftershock] IntervalSeconds` key with `MinIntervalSeconds` / `MaxIntervalSeconds`; old configs get the new 45/60 defaults without deleting other preferences.
+- Animal sounds retain their own 30-second timer, unaffected by shock rescheduling.
+- Snapshots preserve the selected shock deadline and interval using the existing protocol 3 fields; equal limits allow a fixed custom delay.
+
+### Validation
+
+- 76 core regressions and 44 API/resource checks passed; Release build succeeded without warnings/errors.
+- Added range-boundary, invalid-range, independent cadence, snapshot and delayed-tick tests. In-game timing and multiplayer presentation still need validation.
+
 ## 0.1.5 — 2026-11-09
 
 ### Changed

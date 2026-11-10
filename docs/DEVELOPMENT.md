@@ -48,6 +48,7 @@ The package icon can be resized from the preserved cover using `bash scripts/cre
 - `VoiceDebuffs`: host-selected voice/aftershock state, timed native pitch overrides and late-join snapshots.
 - `AftershockVisual`: existing local native shake and original electrical arcs.
 - `AftershockCamera`: owner-only incremental native additive yaw; stops on death, menus or level exit, and does not lock input.
+- `ShockSchedule`: bounded host-side interval selection; selected deadlines use existing snapshot fields and never update the independent animal timer.
 - `AftershockImpact`: bounded yaw curve, probability boundaries and once-only weak-shake migration.
 - Native Q posture is applied once by the host through `PlayerTumble.TumbleSet(true, false)`, avoiding the voluntary launch upgrade. Impact packets in 0.1.3 use protocol 2; 0.1.4 uses protocol 3 for the added animal events/snapshots. Impact packets carry the host-selected signed angle and boolean decision.
 - `AnimalClips` / `PcmWave`: strict decoding of four embedded, normalized PCM clips, each at most three seconds.

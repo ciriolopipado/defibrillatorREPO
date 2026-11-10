@@ -25,7 +25,7 @@ Direct retrieval of the source pages/license text was blocked by this environmen
 - Mono, 44100 Hz, signed PCM16 WAV. The strict runtime decoder rejects oversized, invalid or over-three-second clips.
 - The four processed WAVs are embedded in `Defibrillator.dll`; no runtime Internet access or loose audio installation is required.
 - The host chooses one of the four uniformly on every animal interval (30 seconds by default); repetitions are allowed.
-- The animal timer is independent of the electrical-shock interval. It starts after revival and ends on death or level exit; it continues after the 180-second comic-pitch effect expires.
+- The animal timer remains at 30 seconds independently of the electrical shocks, which draw fresh 45–60 second delays by default as of 0.1.6. It starts after revival and ends on death or level exit; it continues after the 180-second comic-pitch effect expires.
 - Animal playback uses a separate AudioSource at pitch 1 with Doppler disabled and the neutral native voice mixer. The assigned high/low player pitch and distorted-voice mixer are not copied.
 - Real microphone/TTS playback is briefly suppressed through native volume override, without changing microphone capture, transmission settings or the microphone device.
 - Speech animation/indicator fields are temporarily overlaid from the animal clip's amplitude and restored around native updates/RPCs and on cleanup. Network speech state is not forged through manual speech RPCs.

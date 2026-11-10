@@ -59,6 +59,12 @@ Look for `Loaded four embedded animal recordings, each at most three seconds.`. 
 All players must update both DLLs together: protocol 3 adds animal events/snapshots. No additional loose audio files or Internet access are required to play. `[AnimalVoice] Enabled` / `IntervalSeconds` are host settings; `Volume` is local playback gain. Assigned player pitch never controls animal pitch.
 Animals run every 30 seconds by default, even if push-to-talk is inactive, and can repeat. They stop at death/level end. Test direct microphone and TTS restoration after the clip; no capture device settings are changed.
 
+## Separate shock and animal timing — 0.1.6
+
+`[Aftershock] MinIntervalSeconds=45` and `MaxIntervalSeconds=60` govern a fresh random delay for every shock. The old `[Aftershock] IntervalSeconds` entry may remain in an upgraded config, but it is no longer read. Startup logs the active range and this legacy-key behavior.
+`[AnimalVoice] IntervalSeconds=30` independently controls the animal schedule. A shock does not postpone an animal or reset its cadence. The two events may occasionally overlap; independence does not guarantee mutual exclusion.
+To test fixed shocks, set minimum and maximum to the same valid value. Minimum must be at least 5, maximum no greater than 300, and minimum must not exceed maximum.
+
 ## Determine which stage failed
 
 Read `BepInEx/LogOutput.log` from the actual Thunderstore profile used by the **host**.
@@ -68,7 +74,7 @@ The presence of a different revival item is insufficient to diagnose plugin load
 | --- | --- |
 | No mention of Industrial Defibrillator or its plugin ID | Check installation, selected profile, loader discovery errors and dependency errors. Do not assume a specific cause yet. |
 | `Defibrillator initialization failed; features disabled.` | Inspect the complete following exception; configuration, dependency or API initialization failed. |
-| `Industrial Defibrillator 0.1.5 loaded.` | Plugin initialization completed; this alone does not confirm item registration or spawning. |
+| `Industrial Defibrillator 0.1.6 loaded.` | Plugin initialization completed; this alone does not confirm item registration or spawning. |
 | `Registered Industrial Defibrillator using native shell:` | REPOLib accepted the custom prefab/definition. |
 | `Item registration failed; no replacement of vanilla items was attempted.` | Inspect the following exception to identify donor discovery, prefab construction or REPOLib registration failure. |
 | `Reserved one defibrillator shop slot at price 2.` | The host's native shop-spawn method accepted the custom item or queued its spawn. This alone does not prove the instantiated object completed startup. |

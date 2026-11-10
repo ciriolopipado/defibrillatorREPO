@@ -2,12 +2,12 @@
 
 ## Evidence
 
-Release compilation, 69 core behavior tests and 44 API/embedded-resource checks passed in the development environment.
-All game scenarios below are **unrun for v0.1.5**. The user tested v0.1.0 and reported a confirmed registration failure in donor discovery; shop availability did not pass then. Subsequent tests reported that the object appeared but was oversized, with unrealistic weight and hitboxes. The user subsequently reported that the build worked well overall and the shock visuals looked good, but its impact felt weak. This is qualitative feedback, not a completed acceptance matrix. Reference DLLs do not provide a playable game installation.
+Release compilation, 76 core behavior tests and 44 API/embedded-resource checks passed in the development environment.
+All game scenarios below are **unrun for v0.1.6**. The user tested v0.1.0 and reported a confirmed registration failure in donor discovery; shop availability did not pass then. Subsequent tests reported that the object appeared but was oversized, with unrealistic weight and hitboxes. The user subsequently reported that the build worked well overall and the shock visuals looked good, but its impact felt weak. This is qualitative feedback, not a completed acceptance matrix. Reference DLLs do not provide a playable game installation.
 
 ## Preparation
 
-Use two players on R.E.P.O. 0.5.1 with the same v0.1.5 test ZIP (remove the old installation first), BepInExPack 5.4.2305 and REPOLib 4.3.0.
+Use two players on R.E.P.O. 0.5.1 with the same v0.1.6 test ZIP (remove the old installation first), BepInExPack 5.4.2305 and REPOLib 4.3.0.
 Create a separate profile and a new save. First test without optional mods.
 Preserve `BepInEx/LogOutput.log` from both machines after the session.
 
@@ -38,7 +38,7 @@ Preserve `BepInEx/LogOutput.log` from both machines after the session.
 | V02 | Start/complete near another player | Charge cue locally; discharge once on nearby clients | Unrun |
 | D01 | Revive and speak over the game voice chat | Every listener hears the same clearly high or low voice; other players remain unchanged | Unrun |
 | D02 | Remain alive for over 180 seconds | Voice returns to normal; aftershocks continue | Unrun |
-| D03 | Wait for 30/60/90 seconds after revival | One visible/audible shock at each interval; affected player's camera shakes/turns and may tumble; no direct HP subtraction (isolate from environmental impacts) | Unrun |
+| D03 | Measure at least three shock times after revival | First and each following scheduled delay are within 45–60 seconds (allow frame/network delay); affected player's camera shakes/turns and may tumble; no direct HP subtraction (isolate from environmental impacts) | Unrun |
 | D07 | Set YawDegrees=180 and TumbleChance=0; observe a shock | Strong shake and approximately 180-degree horizontal turn on target only; input remains usable | Unrun |
 | D08 | Set TumbleChance=1; observe with host/client roles swapped | Native Q posture occurs once and is seen by all; recover with normal controls; no voluntary launch-upgrade impulse | Unrun |
 | D09 | Set YawDegrees=0 and TumbleChance=0 | No forced turn or tumble; existing visuals and configured native shake remain | Unrun |
@@ -53,7 +53,10 @@ Preserve `BepInEx/LogOutput.log` from both machines after the session.
 | A04 | Compare the same animal with high/low assigned player voice | Same natural animal pitch/speed and duration; source pitch stays 1, no Doppler | Unrun |
 | A05 | Listen as host/client from different distances and with player-volume changes | Same animal chosen, positional playback and voice gain respected | Unrun |
 | A06 | Die, leave level or disconnect mid-clip; late join afterwards | Playback/overrides clear, no old clip replay; next deadline preserved | Unrun |
-| A07 | Set electrical interval to 10 seconds; leave animal interval at 30 | Animal remains every 30 seconds, not every shock | Unrun |
+| A07 | Set electrical MinIntervalSeconds=10 / MaxIntervalSeconds=10; leave animal interval at 30 | Animal remains every 30 seconds, not every shock | Unrun |
+| T01 | Upgrade a profile containing only the old Aftershock.IntervalSeconds=30 | New shock limits default to 45/60; animal interval remains 30 | Unrun |
+| T02 | Observe animal emissions while electrical delays vary | Animal cadence remains 30 seconds regardless of shocks; occasional simultaneous events are valid | Unrun |
+| T03 | Late join or change host between shocks | Selected deadline survives snapshot; no shock burst or reset of animal cadence | Unrun |
 | A08 | Survive beyond comic pitch expiry | Voice pitch returns to normal; scheduled animal interruptions continue until death/level end | Unrun |
 | N01 | Operator disconnects mid-attempt | No delayed revival; another operator can start | Unrun |
 | N02 | Host changes if the game supports continuation | Progress resets; charge preserved; no duplicate revival | Unrun |
